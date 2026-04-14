@@ -14,15 +14,14 @@ use Override;
 class LocalizationServiceProvider extends ServiceProvider
 {
     #[Override]
-    public function register() {
+    public function register()
+    {
         $this->mergeConfigFrom(LocalizationConfig::CONFIG_PATH, 'localization');
 
         $this->app->singleton(LocalizationConfigInterface::class, LocalizationConfig::class);
-        
+
         $this->app->scoped(LocalizationStateInterface::class, LocalizationState::class);
     }
 
-    public function boot():void{
-
-    }
+    public function boot(): void {}
 }

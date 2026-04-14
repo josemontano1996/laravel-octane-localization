@@ -10,7 +10,7 @@ class InvalidLocale extends InvalidArgumentException
 {
     public static function becauseItIsEmpty(): self
     {
-        return new self("The locale cannot be empty.");
+        return new self('The locale cannot be empty.');
     }
 
     public static function unsupported(string $locale): self

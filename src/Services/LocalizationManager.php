@@ -81,7 +81,7 @@ final readonly class LocalizationManager
             Carbon::setLocale($defaultLocale);
         }
         URL::defaults([$this->config->getParameterKey() => null]);
-        
+
         App::setLocale($defaultLocale);
 
         $this->state->reset();

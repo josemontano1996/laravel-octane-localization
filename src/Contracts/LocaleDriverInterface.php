@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 namespace Josemontano1996\LaravelOctaneLocalization\Contracts;
-use Josemontano1996\LaravelOctaneLocalization\Drivers\Concerns\DoesNotPersistLocale;
 
 use Illuminate\Http\Request;
+use Josemontano1996\LaravelOctaneLocalization\Drivers\Concerns\DoesNotPersistLocale;
 
 interface LocaleDriverInterface
 {
@@ -18,6 +18,7 @@ interface LocaleDriverInterface
      * Store the locale for future requests.
      *
      * * @param string $locale The validated locale to save.
+     *
      * * @see DoesNotPersistLocale Use this trait for a no-op implementation.
      */
     public function storeLocale(string $locale): void;
