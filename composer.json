@@ -13,5 +13,60 @@
             "email": "jm3develop@gmail.com"
         }
     ],
-    "require": {}
+    "require": {
+        "php": "^8.4",
+        "illuminate/support": "^12.0|^13.0"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.26",
+        "pestphp/pest": "^4.2",
+        "orchestra/testbench": "^10.8|^11.0",
+        "rector/rector": "^2.3",
+        "larastan/larastan": "^3.9"
+    },
+    "suggest": {
+        "laravel/octane": "Recommended for high-performance support."
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Josemontano1996\\LaravelOctaneLocalization\\Providers\\LocalizationServiceProvider"
+            ]
+        }
+    },
+    "scripts": {
+        "test": "pest",
+        "coverage": "pest --coverage",
+        "rector": "rector",
+        "lint": "pint --parallel",
+        "analyse": "phpstan analyse"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "archive": {
+        "exclude": [
+            "/tests",
+            "/docs",
+            "/benchmarks",
+            "/.github",
+            "/.gitattributes",
+            "/node_modules",
+            "/.gitignore",
+            "/.editorconfig",
+            "/.php-cs-fixer.dist.php",
+            "/.styleci.yml",
+            "/phpunit.xml",
+            "/phpunit.xml.dist",
+            "/phpstan.neon",
+            "/phpcs.xml",
+            "/rector.php",
+            "/pint.json",
+            "/composer.lock",
+            "/docker-compose.yml",
+            "/.docker"
+        ]
+    }
 }
