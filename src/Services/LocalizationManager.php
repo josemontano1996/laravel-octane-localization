@@ -11,9 +11,9 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Number;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocaleDriverInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationConfigInterface;
+use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationManagerInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationStateInterface;
 use Josemontano1996\LaravelOctaneLocalization\Exceptions\DriverException;
-use LocalizationManagerInterface;
 
 final readonly class LocalizationManager implements LocalizationManagerInterface
 {
