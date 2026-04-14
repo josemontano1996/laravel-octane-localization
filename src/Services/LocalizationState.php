@@ -7,7 +7,7 @@ namespace Josemontano1996\LaravelOctaneLocalization\Services;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationStateInterface;
 use Josemontano1996\LaravelOctaneLocalization\Exceptions\InvalidLocale;
 
-final readonly class LocalizationState implements LocalizationStateInterface
+final class LocalizationState implements LocalizationStateInterface
 {
     public function __construct(
         private ?string $locale = null
