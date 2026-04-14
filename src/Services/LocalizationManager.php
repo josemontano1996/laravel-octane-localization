@@ -13,8 +13,9 @@ use Josemontano1996\LaravelOctaneLocalization\Contracts\LocaleDriverInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationConfigInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationStateInterface;
 use Josemontano1996\LaravelOctaneLocalization\Exceptions\DriverException;
+use LocalizationManagerInterface;
 
-final readonly class LocalizationManager
+final readonly class LocalizationManager implements LocalizationManagerInterface
 {
     public function __construct(
         private LocalizationConfigInterface $config,

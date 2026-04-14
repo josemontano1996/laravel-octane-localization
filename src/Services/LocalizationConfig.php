@@ -8,10 +8,8 @@ use Illuminate\Support\Facades\Config;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationConfigInterface;
 use Josemontano1996\LaravelOctaneLocalization\Exceptions\InvalidConfiguration;
 
-final readonly class LocalizationConfig implements LocalizationConfigInterface
+final class LocalizationConfig implements LocalizationConfigInterface
 {
-    public const string CONFIG_PATH = __DIR__.'/../../config/localization.php';
-
     public const string DEFAULT_LOCALE_CONFIG_KEY = 'app.locale';
 
     public const string FALLBACK_LOCALE_CONFIG_KEY = 'app.fallback_locale';
@@ -19,6 +17,8 @@ final readonly class LocalizationConfig implements LocalizationConfigInterface
     public const string SUPPORTED_LOCALES_CONFIG_KEY = 'localization.supported_locales';
 
     public const string PARAMETER_KEY_CONFIG_KEY = 'localization.parameter_key';
+
+    private ?array $cachedSupported = null;
 
     public function getDefaultLocale(): string
     {
@@ -46,6 +46,10 @@ final readonly class LocalizationConfig implements LocalizationConfigInterface
 
     public function getSupportedLocales(): array
     {
+        if ($this->cachedSupported !== null) {
+            return $this->cachedSupported;
+        }
+
         $configKey = self::SUPPORTED_LOCALES_CONFIG_KEY;
         $raw = Config::get($configKey);
 
@@ -68,7 +72,7 @@ final readonly class LocalizationConfig implements LocalizationConfigInterface
             $normalized[$localeCode] = $value;
         }
 
-        return $normalized;
+        return $this->cachedSupported = $normalized;
     }
 
     public function isSupported(?string $locale): bool
