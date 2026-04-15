@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Number;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocaleDriverInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationConfigInterface;
+use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationContextInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationManagerInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationStateInterface;
 use Josemontano1996\LaravelOctaneLocalization\Exceptions\DriverException;
@@ -20,7 +21,17 @@ final readonly class LocalizationManager implements LocalizationManagerInterface
     public function __construct(
         private LocalizationConfigInterface $config,
         private LocalizationStateInterface $state,
+        private LocalizationContextInterface $context
     ) {}
+
+    public function setLocale(string $locale): void
+    {
+        $target = $this->config->isSupportedLocale($locale)
+         ? $locale
+         : $this->config->getDefaultLocale();
+
+        $this->state->set($target);
+    }
 
     public function detect(Request $request): void
     {
@@ -52,13 +63,14 @@ final readonly class LocalizationManager implements LocalizationManagerInterface
 
         return $this->config->getDefaultLocale();
     }
-    
 
     public function syncWithApplication(): void
     {
         $locale = $this->state->get();
 
         App::setLocale($locale);
+
+        $this->context->hydrate($locale);
 
         URL::defaults([$this->config->getParameterKey() => $locale]);
 

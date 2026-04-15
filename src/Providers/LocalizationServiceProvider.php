@@ -7,6 +7,7 @@ namespace Josemontano1996\LaravelOctaneLocalization\Providers;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationConfigInterface;
+use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationContextInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationManagerInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationRedirectorInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationStateInterface;
@@ -15,6 +16,7 @@ use Josemontano1996\LaravelOctaneLocalization\Drivers\CookieDriver;
 use Josemontano1996\LaravelOctaneLocalization\Middlewares\LivewireLocalizationBridge;
 use Josemontano1996\LaravelOctaneLocalization\Middlewares\LocalizationMiddleware;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationConfig;
+use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationContext;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationManager;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationRedirector;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationState;
@@ -32,8 +34,9 @@ class LocalizationServiceProvider extends ServiceProvider
         // 1. Core Services (Singletons)
         $this->app->singleton(LocalizationConfigInterface::class, LocalizationConfig::class);
         $this->app->singleton(UrlParserInterface::class, URLParser::class);
-        $this->app->singleton(LocalizationManagerInterface::class, LocalizationManager::class);
         $this->app->singleton(LocalizationRedirectorInterface::class, LocalizationRedirector::class);
+        $this->app->singleton(LocalizationManagerInterface::class, LocalizationManager::class);
+        $this->app->singleton(LocalizationContextInterface::class, LocalizationContext::class);
 
         // 2. Data/State (Scoped - Fresh for every request)
         $this->app->scoped(LocalizationStateInterface::class, LocalizationState::class);
@@ -79,5 +82,6 @@ class LocalizationServiceProvider extends ServiceProvider
         // Lazy resolution
         $router = $this->app->make(Router::class);
         $router->prependMiddlewareToGroup('web', LivewireLocalizationBridge::class);
+
     }
 }

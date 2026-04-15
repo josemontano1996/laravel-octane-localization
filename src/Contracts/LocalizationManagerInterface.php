@@ -9,6 +9,11 @@ use Illuminate\Http\Request;
 interface LocalizationManagerInterface
 {
     /**
+     * Sets the locale state in the manager
+     */
+    public function setLocale(string $locale): void;
+
+    /**
      * Identify the locale and persist it to all configured drivers.
      * Used for primary localized routes where the language should be "remembered".
      */
