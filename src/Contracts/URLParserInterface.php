@@ -19,4 +19,8 @@ interface UrlParserInterface
      * Useful for parsing referer headers or redirected URLs.
      */
     public function getLocaleFromUrl(string $url): ?string;
+
+
+    public function getLocalizedUrl(string $url, string $locale): string;
+
 }

@@ -22,7 +22,7 @@ final readonly class SessionDriver implements LocaleDriverInterface
         $sessionKey = $this->config->getParameterKey();
         $locale = $request->session()->get($sessionKey);
 
-        return $this->config->isSupported($locale) ? $locale : null;
+        return $this->config->isSupportedLocale($locale) ? $locale : null;
     }
 
     public function storeLocale(string $locale, Request $request): void

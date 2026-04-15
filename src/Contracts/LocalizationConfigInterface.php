@@ -43,7 +43,7 @@ interface LocalizationConfigInterface
     /**
      * Validates if a locale is supported.
      */
-    public function isSupported(?string $locale): bool;
+    public function isSupportedLocale(?string $locale): bool;
 
     /**
      * Get the query parameter or input key used to identify the locale.
@@ -83,4 +83,16 @@ interface LocalizationConfigInterface
      * * @example 1440 (24 hours)
      */
     public function getCookieExpiration(): int;
+
+       /**
+     * Checks if redirections are enabled.
+     *
+     */
+    public function isRedirectionEnabled(): bool;
+
+    /**
+     * Get the redirection excluded paths.
+     *
+     */
+    public function getRedirectionExcludedPaths(): array;
 }

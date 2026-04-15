@@ -45,13 +45,14 @@ final readonly class LocalizationManager implements LocalizationManagerInterface
         foreach ($driverClasses as $driverClass) {
             $result = $this->resolveDriver($driverClass)->getLocale($request);
 
-            if ($this->config->isSupported($result)) {
+            if ($this->config->isSupportedLocale($result)) {
                 return $result;
             }
         }
 
         return $this->config->getDefaultLocale();
     }
+    
 
     public function syncWithApplication(): void
     {

@@ -23,7 +23,7 @@ final readonly class CookieDriver implements LocaleDriverInterface
         $cookieKey = $this->config->getParameterKey();
         $locale = $request->cookie($cookieKey);
 
-        return $this->config->isSupported($locale) ? (string) $locale : null;
+        return $this->config->isSupportedLocale($locale) ? (string) $locale : null;
     }
 
     /**

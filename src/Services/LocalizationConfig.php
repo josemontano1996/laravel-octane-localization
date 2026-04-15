@@ -140,7 +140,7 @@ final class LocalizationConfig implements LocalizationConfigInterface
         return $this->cachedCodes = array_keys($this->getSupportedLocales());
     }
 
-    public function isSupported(?string $locale): bool
+    public function isSupportedLocale(?string $locale): bool
     {
         if ($locale === null || $locale === '') {
             return false;
@@ -165,5 +165,15 @@ final class LocalizationConfig implements LocalizationConfigInterface
     public function getCookieExpiration(): int
     {
         return (int) Config::get(self::COOKIE_TTL_KEY, 1440);
+    }
+
+    public function isRedirectionEnabled(): bool
+    {
+        return (bool) config('localization.redirections.active', true);
+    }
+
+    public function getRedirectionExcludedPaths(): array
+    {
+        return (array) config('localization.redirections.except', []);
     }
 }
