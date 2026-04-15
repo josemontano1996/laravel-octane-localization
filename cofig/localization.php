@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+use Josemontano1996\LaravelOctaneLocalization\Drivers\RequestPreferredLocaleDriver;
+use Josemontano1996\LaravelOctaneLocalization\Drivers\SessionDriver;
+use Josemontano1996\LaravelOctaneLocalization\Drivers\UrlDriver;
 
 return [
 
@@ -17,7 +20,6 @@ return [
     */
     'supported_locales' => ['en'],
 
-
     /*
     |--------------------------------------------------------------------------
     | IN case using cookie drivers
@@ -29,9 +31,10 @@ return [
     'localization.cookie_ttl' => 1440,
 
     'drivers' => [
-        Josemontano1996\LaravelOctaneLocalization\Drivers\UrlDriver::class,
-        Josemontano1996\LaravelOctaneLocalization\Drivers\SessionDriver::class,
+        UrlDriver::class,
+        SessionDriver::class,
         // Josemontano1996\LaravelOctaneLocalization\Drivers\CookieDriver::class,
+        RequestPreferredLocaleDriver::class,
     ],
 
     /*

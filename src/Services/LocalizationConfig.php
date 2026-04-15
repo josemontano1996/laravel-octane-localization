@@ -24,6 +24,8 @@ final class LocalizationConfig implements LocalizationConfigInterface
 
     private ?array $cachedSupported = null;
 
+    private ?array $cachedCodes = null;
+
     public function getPrimaryDrivers(): array
     {
         $key = self::PRIMARY_DRIVERS_KEY;
@@ -93,6 +95,16 @@ final class LocalizationConfig implements LocalizationConfigInterface
         }
 
         return $this->cachedSupported = $normalized;
+    }
+
+    public function getSupportedLocaleCodes(): array
+    {
+        if ($this->cachedCodes !== null) {
+            return $this->cachedCodes;
+        }
+
+        // Reuse your existing normalization logic
+        return $this->cachedCodes = array_keys($this->getSupportedLocales());
     }
 
     public function isSupported(?string $locale): bool

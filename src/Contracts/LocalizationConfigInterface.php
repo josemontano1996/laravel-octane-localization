@@ -34,6 +34,13 @@ interface LocalizationConfigInterface
     public function getSupportedLocales(): array;
 
     /**
+     * Get the flat list of supported ISO codes.
+     *
+     * * @return string[]
+     */
+    public function getSupportedLocaleCodes(): array;
+
+    /**
      * Validates if a locale is supported.
      */
     public function isSupported(?string $locale): bool;
@@ -55,9 +62,10 @@ interface LocalizationConfigInterface
      * @throws InvalidConfiguration
      */
     public function getPrimaryDrivers(): array;
-    
+
     /**
      * Get the cookie expiration time in minutes.
+     *
      * * @example 1440 (24 hours)
      */
     public function getCookieExpiration(): int;
