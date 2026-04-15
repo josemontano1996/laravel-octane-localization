@@ -10,14 +10,6 @@ use Josemontano1996\LaravelOctaneLocalization\Queue\LocalizationQueueMiddleware;
 
 trait LocalizedJob
 {
-    /**
-     * Laravel will automatically detect this method and apply the middleware.
-     */
-    public function middleware(): array
-    {
-        return [new LocalizationQueueMiddleware()];
-    }
-
     public function restoreLocalization(): void
     {
         $context = app(LocalizationContextInterface::class);

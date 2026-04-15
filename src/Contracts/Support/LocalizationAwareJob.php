@@ -10,8 +10,6 @@ namespace Josemontano1996\LaravelOctaneLocalization\Contracts\Support;
  */
 interface LocalizationAwareJob
 {
-    public function middleware(): array;
-
     public function restoreLocalization(): void;
 
     /**
