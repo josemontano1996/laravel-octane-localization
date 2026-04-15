@@ -33,12 +33,12 @@ final readonly class CookieDriver implements LocaleDriverInterface
     {
         $cookieKey = $this->config->getParameterKey();
 
-        // We use the Cookie facade's 'queue' method. 
+        // We use the Cookie facade's 'queue' method.
         // Laravel handles attaching queued cookies to the outgoing response automatically.
         Cookie::queue(
-            $cookieKey, 
-            $locale, 
-            $this->config->getCookieExpiration() 
+            $cookieKey,
+            $locale,
+            $this->config->getCookieExpiration()
         );
     }
 }

@@ -22,7 +22,7 @@ final readonly class URLParser implements UrlParserInterface
 
         // Create a temporary request object to use Laravel's segment parsing
         $fakeRequest = Request::create($url);
-        
+
         return $this->getLocaleFromRequest($fakeRequest);
     }
 }

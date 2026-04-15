@@ -50,9 +50,9 @@ class LocalizationServiceProvider extends ServiceProvider
         foreach ($allUsedDrivers as $driverClass) {
             // Special binding for CookieDriver
             if ($driverClass === CookieDriver::class) {
-               $this->app->scoped($driverClass, fn () => new CookieDriver(
-                $config
-            ));
+                $this->app->scoped($driverClass, fn () => new CookieDriver(
+                    $config
+                ));
 
                 continue;
             }
