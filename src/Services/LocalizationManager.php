@@ -49,7 +49,7 @@ final readonly class LocalizationManager implements LocalizationManagerInterface
         // 3. Global Sync (Persistence)
         $finalLocale = $this->state->get();
         foreach ($resolvedDrivers as $driver) {
-            $driver->storeLocale($finalLocale);
+            $driver->storeLocale($finalLocale, $request);
         }
     }
 

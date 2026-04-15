@@ -21,5 +21,5 @@ interface LocaleDriverInterface
      *
      * * @see DoesNotPersistLocale Use this trait for a no-op implementation.
      */
-    public function storeLocale(string $locale): void;
+    public function storeLocale(string $locale, Request $request): void;
 }

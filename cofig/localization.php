@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Josemontano1996\LaravelOctaneLocalization\Drivers\SessionDriver;
 use Josemontano1996\LaravelOctaneLocalization\Drivers\UrlDriver;
 
 return [
@@ -20,6 +21,7 @@ return [
 
     'drivers' => [
         UrlDriver::class,
+        SessionDriver::class,
     ],
 
     /*
