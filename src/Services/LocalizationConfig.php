@@ -20,6 +20,8 @@ final class LocalizationConfig implements LocalizationConfigInterface
 
     public const string PRIMARY_DRIVERS_KEY = 'localization.drivers';
 
+    public const string COOKIE_TTL_KEY = 'localization.cookie_ttl';
+
     private ?array $cachedSupported = null;
 
     public function getPrimaryDrivers(): array
@@ -113,5 +115,10 @@ final class LocalizationConfig implements LocalizationConfigInterface
         }
 
         return (string) $parameterKey;
+    }
+
+    public function getCookieExpiration(): int
+    {
+        return (int) Config::get(self::COOKIE_TTL_KEY, 1440);
     }
 }

@@ -55,4 +55,10 @@ interface LocalizationConfigInterface
      * @throws InvalidConfiguration
      */
     public function getPrimaryDrivers(): array;
+    
+    /**
+     * Get the cookie expiration time in minutes.
+     * * @example 1440 (24 hours)
+     */
+    public function getCookieExpiration(): int;
 }

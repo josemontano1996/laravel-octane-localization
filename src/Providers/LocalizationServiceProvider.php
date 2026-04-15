@@ -9,6 +9,7 @@ use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationConfigInterf
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationManagerInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationStateInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\UrlParserInterface;
+use Josemontano1996\LaravelOctaneLocalization\Drivers\CookieDriver;
 use Josemontano1996\LaravelOctaneLocalization\Middlewares\LocalizationMiddleware;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationConfig;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationManager;
@@ -24,13 +25,41 @@ class LocalizationServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(self::CONFIG_PATH, 'localization');
-
+        // 1. Core Services (Singletons)
         $this->app->singleton(LocalizationConfigInterface::class, LocalizationConfig::class);
         $this->app->singleton(UrlParserInterface::class, URLParser::class);
+        $this->app->singleton(LocalizationManagerInterface::class, LocalizationManager::class);
 
-        $this->app->scoped(LocalizationManagerInterface::class, LocalizationManager::class);
+        // 2. Data/State (Scoped - Fresh for every request)
         $this->app->scoped(LocalizationStateInterface::class, LocalizationState::class);
         $this->app->scoped(LocalizationMiddleware::class);
+
+        $config = $this->app->make(LocalizationConfigInterface::class);
+
+        // 3. Register Drivers
+        $this->registerPrimaryDrivers($config);
+    }
+
+    private function registerPrimaryDrivers(LocalizationConfigInterface $config): void
+    {
+        $allUsedDrivers = array_unique([
+            ...$config->getPrimaryDrivers(),
+            // ...$config->getSecondaryDrivers()
+        ]);
+
+        foreach ($allUsedDrivers as $driverClass) {
+            // Special binding for CookieDriver
+            if ($driverClass === CookieDriver::class) {
+               $this->app->scoped($driverClass, fn () => new CookieDriver(
+                $config
+            ));
+
+                continue;
+            }
+
+            // Standard binding for everyone else
+            $this->app->scoped($driverClass);
+        }
     }
 
     public function boot(): void
