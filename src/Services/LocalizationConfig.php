@@ -22,6 +22,8 @@ final class LocalizationConfig implements LocalizationConfigInterface
 
     public const string COOKIE_TTL_KEY = 'localization.cookie_ttl';
 
+    public const string EXTENSIONS_KEY = 'localization.ext';
+
     private ?array $cachedSupported = null;
 
     private ?array $cachedCodes = null;
@@ -40,6 +42,37 @@ final class LocalizationConfig implements LocalizationConfigInterface
         }
 
         return $drivers;
+    }
+
+    public function getAllExtensionDrivers(): array
+    {
+        $key = self::EXTENSIONS_KEY;
+
+        $ext = (array) Config::get($key, []);
+
+        $allExtDrivers = [];
+
+        foreach ($ext as $extension) {
+            if (isset($extension['drivers']) && \is_array($extension['drivers'])) {
+                $allExtDrivers = [...$allExtDrivers, ...$extension['drivers']];
+            }
+        }
+
+        return array_unique($allExtDrivers);
+    }
+
+    public function getExtensionDrivers(string $extension): array
+    {
+
+        $key = self::EXTENSIONS_KEY.".{$extension}.drivers";
+
+        $drivers = Config::get($key);
+
+        if (! \is_array($drivers)) {
+            return [];
+        }
+
+        return array_values($drivers);
     }
 
     public function getDefaultLocale(): string

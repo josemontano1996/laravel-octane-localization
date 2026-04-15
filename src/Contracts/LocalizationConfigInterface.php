@@ -64,6 +64,21 @@ interface LocalizationConfigInterface
     public function getPrimaryDrivers(): array;
 
     /**
+     * Get the list of driver class names responsible for locale detection for an external packages.
+     *
+     * @return array<int, class-string>
+     */
+    public function getExtensionDrivers(string $extension): array;
+
+     /**
+     * Get the full unique list of driver class names responsible for locale detection for all external packages.
+     *
+     * @return array<int, class-string>
+     */
+    public function getAllExtensionDrivers(): array;
+
+
+    /**
      * Get the cookie expiration time in minutes.
      *
      * * @example 1440 (24 hours)

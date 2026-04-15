@@ -44,7 +44,7 @@ class LocalizationServiceProvider extends ServiceProvider
     {
         $allUsedDrivers = array_unique([
             ...$config->getPrimaryDrivers(),
-            // ...$config->getSecondaryDrivers()
+            ...$config->getAllExtensionDrivers()
         ]);
 
         foreach ($allUsedDrivers as $driverClass) {
