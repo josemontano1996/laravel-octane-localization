@@ -17,6 +17,7 @@ interface LocalizationManagerInterface
     /**
      * Identify the locale for the current request context without persisting it.
      * Used for extensions like Livewire or background requests.
+     *
      * * @param array<int, class-string> $driverClasses
      */
     public function discover(Request $request, array $driverClasses): void;

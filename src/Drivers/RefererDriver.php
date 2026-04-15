@@ -21,7 +21,7 @@ final readonly class RefererDriver implements LocaleDriverInterface
     {
         $referer = $request->header('referer');
 
-        if (!$referer) {
+        if (! $referer) {
             return null;
         }
 
