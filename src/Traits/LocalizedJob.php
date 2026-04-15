@@ -6,13 +6,18 @@ namespace Josemontano1996\LaravelOctaneLocalization\Traits;
 
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationManagerInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationContextInterface;
+use Josemontano1996\LaravelOctaneLocalization\Queue\LocalizationQueueMiddleware;
 
-trait RestoresLocalizationContext
+trait LocalizedJob
 {
     /**
-     * Re-hydrates the application state based on the captured context.
-     * This should be called at the beginning of the handle() method.
+     * Laravel will automatically detect this method and apply the middleware.
      */
+    public function middleware(): array
+    {
+        return [new LocalizationQueueMiddleware()];
+    }
+
     public function restoreLocalization(): void
     {
         $context = app(LocalizationContextInterface::class);
@@ -24,10 +29,6 @@ trait RestoresLocalizationContext
         }
     }
 
-    /**
-     * Cleans up the state. Should be called at the end of the handle() 
-     * or in the finally block.
-     */
     public function resetLocalization(): void
     {
         app(LocalizationManagerInterface::class)->flush();

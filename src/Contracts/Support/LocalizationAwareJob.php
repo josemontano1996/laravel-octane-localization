@@ -8,8 +8,10 @@ namespace Josemontano1996\LaravelOctaneLocalization\Contracts\Support;
  * Mark a class as capable of re-hydrating localization
  * state from the Laravel 11 Context.
  */
-interface LocalizationAwareInterface
+interface LocalizationAwareJob
 {
+    public function middleware(): array;
+
     public function restoreLocalization(): void;
 
     /**
