@@ -58,6 +58,7 @@ return [
             'drivers' => [
                 RefererDriver::class,
                 SessionDriver::class,
+                // Josemontano1996\LaravelOctaneLocalization\Drivers\CookieDriver::class,
                 RequestPreferredLocaleDriver::class,
             ]],
     ],
