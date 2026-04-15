@@ -24,33 +24,33 @@ final readonly class LocalizationManager implements LocalizationManagerInterface
 
     public function detect(Request $request): void
     {
-        $driverClasses = $this->config->getPrimaryDrivers();
+        $locale = $this->runDriverStack($request, $this->config->getPrimaryDrivers());
 
-        $resolvedDrivers = [];
+        $this->state->set($locale);
 
-        // 1. Resolve and Detect
+        foreach ($this->config->getPrimaryDrivers() as $driverClass) {
+            $this->resolveDriver($driverClass)->storeLocale($locale, $request);
+        }
+    }
+
+    public function discover(Request $request, array $driverClasses): void
+    {
+        $locale = $this->runDriverStack($request, $driverClasses);
+
+        $this->state->set($locale);
+    }
+
+    private function runDriverStack(Request $request, array $driverClasses): string
+    {
         foreach ($driverClasses as $driverClass) {
-            $driver = $this->resolveDriver($driverClass);
-            $resolvedDrivers[] = $driver;
+            $result = $this->resolveDriver($driverClass)->getLocale($request);
 
-            if (! $this->state->exists()) {
-                $result = $driver->getLocale($request);
-                if ($this->config->isSupported($result)) {
-                    $this->state->set($result);
-                }
+            if ($this->config->isSupported($result)) {
+                return $result;
             }
         }
 
-        // 2. Final Fallback (if no driver found anything)
-        if (! $this->state->exists()) {
-            $this->state->set($this->config->getDefaultLocale());
-        }
-
-        // 3. Global Sync (Persistence)
-        $finalLocale = $this->state->get();
-        foreach ($resolvedDrivers as $driver) {
-            $driver->storeLocale($finalLocale, $request);
-        }
+        return $this->config->getDefaultLocale();
     }
 
     public function syncWithApplication(): void

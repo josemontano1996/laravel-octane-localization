@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Josemontano1996\LaravelOctaneLocalization\Providers;
 
+use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationConfigInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationManagerInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationStateInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\UrlParserInterface;
 use Josemontano1996\LaravelOctaneLocalization\Drivers\CookieDriver;
+use Josemontano1996\LaravelOctaneLocalization\Middlewares\LivewireLocalizationBridge;
 use Josemontano1996\LaravelOctaneLocalization\Middlewares\LocalizationMiddleware;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationConfig;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationManager;
@@ -33,6 +35,7 @@ class LocalizationServiceProvider extends ServiceProvider
         // 2. Data/State (Scoped - Fresh for every request)
         $this->app->scoped(LocalizationStateInterface::class, LocalizationState::class);
         $this->app->scoped(LocalizationMiddleware::class);
+        $this->app->scoped(LivewireLocalizationBridge::class);
 
         $config = $this->app->make(LocalizationConfigInterface::class);
 
@@ -44,7 +47,7 @@ class LocalizationServiceProvider extends ServiceProvider
     {
         $allUsedDrivers = array_unique([
             ...$config->getPrimaryDrivers(),
-            ...$config->getAllExtensionDrivers()
+            ...$config->getAllExtensionDrivers(),
         ]);
 
         foreach ($allUsedDrivers as $driverClass) {
@@ -69,5 +72,9 @@ class LocalizationServiceProvider extends ServiceProvider
                 self::CONFIG_PATH => config_path('localization.php'),
             ], 'localization-config');
         }
+
+        // Lazy resolution
+        $router = $this->app->make(Router::class);
+        $router->prependMiddlewareToGroup('web', LivewireLocalizationBridge::class);
     }
 }
