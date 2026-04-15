@@ -8,6 +8,7 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationConfigInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationManagerInterface;
+use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationRedirectorInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationStateInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\UrlParserInterface;
 use Josemontano1996\LaravelOctaneLocalization\Drivers\CookieDriver;
@@ -15,6 +16,7 @@ use Josemontano1996\LaravelOctaneLocalization\Middlewares\LivewireLocalizationBr
 use Josemontano1996\LaravelOctaneLocalization\Middlewares\LocalizationMiddleware;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationConfig;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationManager;
+use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationRedirector;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationState;
 use Josemontano1996\LaravelOctaneLocalization\Services\URLParser;
 use Override;
@@ -31,6 +33,7 @@ class LocalizationServiceProvider extends ServiceProvider
         $this->app->singleton(LocalizationConfigInterface::class, LocalizationConfig::class);
         $this->app->singleton(UrlParserInterface::class, URLParser::class);
         $this->app->singleton(LocalizationManagerInterface::class, LocalizationManager::class);
+        $this->app->singleton(LocalizationRedirectorInterface::class, LocalizationRedirector::class);
 
         // 2. Data/State (Scoped - Fresh for every request)
         $this->app->scoped(LocalizationStateInterface::class, LocalizationState::class);
