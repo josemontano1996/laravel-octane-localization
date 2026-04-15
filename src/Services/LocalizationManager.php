@@ -24,7 +24,7 @@ final readonly class LocalizationManager implements LocalizationManagerInterface
 
     public function detect(Request $request): void
     {
-        $driverClasses = config('localization.drivers', []);
+        $driverClasses = $this->config->getPrimaryDrivers();
 
         $resolvedDrivers = [];
 
@@ -97,7 +97,7 @@ final readonly class LocalizationManager implements LocalizationManagerInterface
         $driver = app($class);
 
         if (! $driver instanceof LocaleDriverInterface) {
-            throw DriverException::invalidInterface($class);
+            throw DriverException::invalidInterface($class, LocaleDriverInterface::class);
         }
 
         return $driver;

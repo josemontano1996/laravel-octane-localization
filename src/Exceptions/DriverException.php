@@ -8,10 +8,10 @@ use InvalidArgumentException;
 
 final class DriverException extends InvalidArgumentException
 {
-    public static function invalidInterface(string $driverClass): self
+    public static function invalidInterface(string $driverClass, string $driverInterface): self
     {
         return new self(
-            "The driver [{$driverClass}] must implement Josemontano1996\LaravelOctaneLocalization\Contracts\LocaleDriverInterface.");
+            "The driver [{$driverClass}] must implement [{$driverInterface}]");
     }
 
     public static function notFound(string $driverClass): self

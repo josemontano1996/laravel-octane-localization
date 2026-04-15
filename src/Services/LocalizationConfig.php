@@ -18,7 +18,25 @@ final class LocalizationConfig implements LocalizationConfigInterface
 
     public const string PARAMETER_KEY_CONFIG_KEY = 'localization.parameter_key';
 
+    public const string PRIMARY_DRIVERS_KEY = 'localization.drivers';
+
     private ?array $cachedSupported = null;
+
+    public function getPrimaryDrivers(): array
+    {
+        $key = self::PRIMARY_DRIVERS_KEY;
+        $drivers = Config::get($key);
+
+        if (empty($drivers)) {
+            throw InvalidConfiguration::missingKey($key);
+        }
+
+        if (! \is_array($drivers)) {
+            throw InvalidConfiguration::invalidType($key, 'array');
+        }
+
+        return $drivers;
+    }
 
     public function getDefaultLocale(): string
     {

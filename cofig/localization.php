@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Josemontano1996\LaravelOctaneLocalization\Drivers\UrlDriver;
+
 return [
 
     'parameter_key' => 'locale',
@@ -16,6 +18,10 @@ return [
     */
     'supported_locales' => ['en'],
 
+    'drivers' => [
+        UrlDriver::class,
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Ignore Paths (Except)
@@ -28,6 +34,12 @@ return [
     */
     'redirections' => [
         'active' => true,
-        'except' => [],
+        'except' => ['api/*', 'webhooks/*'],
+    ],
+
+    'ext' => [
+        'livewire' => [
+            // FirstDriver::class
+        ],
     ],
 ];

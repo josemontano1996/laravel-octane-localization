@@ -17,4 +17,9 @@ final class InvalidConfiguration extends RuntimeException
     {
         return new self("You must define at least one locale in [{$configKey}].");
     }
+
+    public static function invalidType(string $configKey, string $expectedType): self
+    {
+        return new self("The configuration key [{$configKey}] must be of type [{$expectedType}].");
+    }
 }

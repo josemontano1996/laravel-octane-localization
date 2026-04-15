@@ -46,4 +46,13 @@ interface LocalizationConfigInterface
      * @throws InvalidConfiguration
      */
     public function getParameterKey(): string;
+
+    /**
+     * Get the list of driver class names responsible for locale detection and persistence.
+     *
+     * @return array<int, class-string>
+     *
+     * @throws InvalidConfiguration
+     */
+    public function getPrimaryDrivers(): array;
 }
