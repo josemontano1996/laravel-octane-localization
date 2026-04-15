@@ -20,7 +20,7 @@ interface LocalizationContextInterface
      * Remove the localization data from the Context.
      */
     public function forget(): void;
-    
+
     /**
      * Check if a localization context currently exists.
      */

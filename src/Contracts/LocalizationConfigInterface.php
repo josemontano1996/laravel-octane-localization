@@ -84,15 +84,13 @@ interface LocalizationConfigInterface
      */
     public function getCookieExpiration(): int;
 
-       /**
+    /**
      * Checks if redirections are enabled.
-     *
      */
     public function isRedirectionEnabled(): bool;
 
     /**
      * Get the redirection excluded paths.
-     *
      */
     public function getRedirectionExcludedPaths(): array;
 }

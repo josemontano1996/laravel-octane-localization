@@ -52,7 +52,7 @@ final readonly class LocalizationRedirector implements LocalizationRedirectorInt
 
         $localizedUrl = $this->urlParser->getLocalizedUrl(
             $request->fullUrl(),
-           $this->state->get()
+            $this->state->get()
         );
 
         return new RedirectResponse($localizedUrl, 302, [

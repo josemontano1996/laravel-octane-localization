@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Josemontano1996\LaravelOctaneLocalization\Traits;
 
-use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationManagerInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationContextInterface;
-use Josemontano1996\LaravelOctaneLocalization\Queue\LocalizationQueueMiddleware;
+use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationManagerInterface;
 
 trait LocalizedJob
 {
@@ -14,7 +13,7 @@ trait LocalizedJob
     {
         $context = app(LocalizationContextInterface::class);
         $manager = app(LocalizationManagerInterface::class);
-        
+
         if ($locale = $context->get()) {
             $manager->setLocale($locale);
             $manager->syncWithApplication();

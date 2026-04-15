@@ -20,7 +20,5 @@ interface UrlParserInterface
      */
     public function getLocaleFromUrl(string $url): ?string;
 
-
     public function getLocalizedUrl(string $url, string $locale): string;
-
 }
