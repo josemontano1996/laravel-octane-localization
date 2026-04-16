@@ -1,6 +1,7 @@
 # Laravel Octane Localization
 
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/josemontano1996/laravel-octane-localization/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/josemontano1996/laravel-octane-localization/actions)
+[![GitHub Tests Action Status](https://github.com/josemontano1996/laravel-octane-localization/actions/workflows/run-tests.yml/badge.svg)](https://github.com/josemontano1996/laravel-octane-localization/actions)
+
 
 A state-aware, high-performance localization package for Laravel, meticulously designed for **Laravel Octane** (also compatible with traditional FPM). 
 
