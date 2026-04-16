@@ -4,8 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationConfigInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationManagerInterface;
-use Josemontano1996\LaravelOctaneLocalization\Middlewares\LivewireLocalizationBridge;
 use Josemontano1996\LaravelOctaneLocalization\Enums\SupportedExtensions;
+use Josemontano1996\LaravelOctaneLocalization\Middlewares\LivewireLocalizationBridge;
 use Josemontano1996\LaravelOctaneLocalization\Tests\TestCase;
 
 it('bridges localization when a Livewire header is present', function () {
@@ -19,7 +19,7 @@ it('bridges localization when a Livewire header is present', function () {
 
     // Mock the Manager to verify interaction
     $manager = Mockery::mock(LocalizationManagerInterface::class);
-    
+
     // The core expectation: Manager must discover using Livewire-specific drivers
     $manager->shouldReceive('discover')
         ->once()
@@ -64,15 +64,15 @@ it('cleans up state on terminate for Livewire requests', function () {
     // 1. Arrange
     $request = Request::create('/', 'POST');
     $request->headers->set('X-Livewire', 'true');
-    
+
     $manager = Mockery::mock(LocalizationManagerInterface::class);
     $manager->shouldReceive('flush')->once();
-    
+
     $middleware = new LivewireLocalizationBridge($manager, app(LocalizationConfigInterface::class));
 
     // 2. Act
-    $middleware->terminate($request, new Response());
-    
+    $middleware->terminate($request, new Response);
+
     // Mockery verifies 'flush' was called once
 });
 
@@ -87,7 +87,7 @@ it('flushes manager state even if the Livewire request crashes', function () {
     // We expect the standard flow...
     $manager->shouldReceive('discover')->once();
     $manager->shouldReceive('syncWithApplication')->once();
-    
+
     // ...and crucially, the cleanup
     $manager->shouldReceive('flush')->once();
 
@@ -102,8 +102,8 @@ it('flushes manager state even if the Livewire request crashes', function () {
         // Carry on
     } finally {
         // 3. Simulate the Kernel's termination phase
-        $middleware->terminate($request, new Response());
+        $middleware->terminate($request, new Response);
     }
-    
+
     // Mockery asserts flush() was called
 });

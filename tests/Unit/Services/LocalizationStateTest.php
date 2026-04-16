@@ -6,7 +6,7 @@ use Josemontano1996\LaravelOctaneLocalization\Exceptions\InvalidLocale;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationState;
 
 beforeEach(function () {
-    $this->state = new LocalizationState();
+    $this->state = new LocalizationState;
 });
 
 test('it can set and get locale', function () {

@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Context;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationContext;
 
 beforeEach(function () {
-    $this->context = new LocalizationContext();
+    $this->context = new LocalizationContext;
     Context::forget('localization.locale');
 });
 

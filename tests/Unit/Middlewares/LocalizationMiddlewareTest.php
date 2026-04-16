@@ -1,12 +1,12 @@
 <?php
 
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationManagerInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationRedirectorInterface;
 use Josemontano1996\LaravelOctaneLocalization\Middlewares\LocalizationMiddleware;
 use Josemontano1996\LaravelOctaneLocalization\Tests\TestCase;
-use Illuminate\Http\RedirectResponse;
 
 it('detects locale, syncs, and adds headers to the response', function () {
     // 1. Arrange
@@ -42,14 +42,14 @@ it('returns a redirect response if the redirector triggers', function () {
     $request = Request::create('/', 'GET');
     $manager = Mockery::mock(LocalizationManagerInterface::class);
     $redirector = Mockery::mock(LocalizationRedirectorInterface::class);
-$locale = TestCase::ALTERNATIVE_LOCALE;
+    $locale = TestCase::ALTERNATIVE_LOCALE;
 
     $manager->shouldReceive('detect')->once();
     $manager->shouldReceive('syncWithApplication')->once();
 
     // Fix: Create a proper RedirectResponse instead of a generic Response
     $redirectResponse = new RedirectResponse("/{$locale}/home", 302);
-    
+
     $redirector->shouldReceive('shouldRedirect')->once()->andReturn(true);
     $redirector->shouldReceive('getRedirectResponse')->once()->andReturn($redirectResponse);
 
@@ -129,8 +129,8 @@ it('calls flush even if the request throws an exception', function () {
     } finally {
         // 3. The "Octane Simulation"
         // In a real app, the Kernel calls terminate() in the finally block of the request cycle
-        $middleware->terminate($request, new Response());
+        $middleware->terminate($request, new Response);
     }
-    
+
     // Mockery will verify that flush() was called exactly once
 });

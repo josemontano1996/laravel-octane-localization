@@ -7,18 +7,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Number;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocaleDriverInterface;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationConfig;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationContext;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationManager;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationState;
-use Josemontano1996\LaravelOctaneLocalization\Tests\TestCase;
 
 beforeEach(function () {
-    $this->config = new LocalizationConfig();
-    $this->state = new LocalizationState();
-    $this->context = new LocalizationContext();
+    $this->config = new LocalizationConfig;
+    $this->state = new LocalizationState;
+    $this->context = new LocalizationContext;
     $this->manager = new LocalizationManager($this->config, $this->state, $this->context);
 
     Config::set('octane-localization.supported_locales', ['en', 'es', 'fr']);
@@ -40,7 +38,7 @@ test('it can detect locale using drivers', function () {
     $driver->shouldReceive('storeLocale')->once()->with('es', Mockery::any());
 
     // Create a real class to satisfy class_exists
-    if (!class_exists('TestDriver')) {
+    if (! class_exists('TestDriver')) {
         eval('class TestDriver {}');
     }
 
@@ -57,7 +55,7 @@ test('it can discover locale using custom driver stack', function () {
     $driver = Mockery::mock(LocaleDriverInterface::class);
     $driver->shouldReceive('getLocale')->andReturn('fr');
 
-    if (!class_exists('CustomDriver')) {
+    if (! class_exists('CustomDriver')) {
         eval('class CustomDriver {}');
     }
 
@@ -74,12 +72,12 @@ test('it syncs with application state', function () {
 
     // Use current time to test Carbon
     $now = Carbon::now();
-    
+
     $this->manager->syncWithApplication();
 
     expect(App::getLocale())->toBe('es');
     expect($this->context->get())->toBe('es');
-    
+
     // Check URL defaults
     $defaults = URL::getDefaultParameters();
     expect($defaults['locale'])->toBe('es');
@@ -91,7 +89,7 @@ test('it syncs with application state', function () {
 test('it can flush application state', function () {
     $originalLocale = 'en';
     Config::set('app.locale', $originalLocale);
-    
+
     $this->state->set('es');
     $this->manager->syncWithApplication();
 
@@ -101,8 +99,8 @@ test('it can flush application state', function () {
 
     expect($this->state->get())->toBeNull();
 
-    expect(App::getLocale())->toBe('es'); 
-    
+    expect(App::getLocale())->toBe('es');
+
     $defaults = URL::getDefaultParameters();
     expect($defaults['locale'])->toBeNull();
 

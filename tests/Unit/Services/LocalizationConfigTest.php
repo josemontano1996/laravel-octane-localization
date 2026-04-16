@@ -7,7 +7,7 @@ use Josemontano1996\LaravelOctaneLocalization\Exceptions\InvalidConfiguration;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationConfig;
 
 beforeEach(function () {
-    $this->config = new LocalizationConfig();
+    $this->config = new LocalizationConfig;
 });
 
 test('it can get primary drivers', function () {
@@ -64,10 +64,10 @@ test('it can get fallback locale', function () {
 test('it can get supported locales and normalize them', function () {
     // Simple list
     Config::set('octane-localization.supported_locales', ['en', 'es']);
-    
+
     // Create a new instance to clear internal cache
-    $config = new LocalizationConfig();
-    
+    $config = new LocalizationConfig;
+
     expect($config->getSupportedLocales())->toBe([
         'en' => ['name' => 'en'],
         'es' => ['name' => 'es'],
@@ -78,9 +78,9 @@ test('it can get supported locales and normalize them', function () {
         'en' => ['name' => 'English'],
         'fr' => ['name' => 'French'],
     ]);
-    
-    $config = new LocalizationConfig();
-    
+
+    $config = new LocalizationConfig;
+
     expect($config->getSupportedLocales())->toBe([
         'en' => ['name' => 'English'],
         'fr' => ['name' => 'French'],
@@ -89,17 +89,17 @@ test('it can get supported locales and normalize them', function () {
 
 test('it can get supported locale codes', function () {
     Config::set('octane-localization.supported_locales', ['en', 'es']);
-    
-    $config = new LocalizationConfig();
-    
+
+    $config = new LocalizationConfig;
+
     expect($config->getSupportedLocaleCodes())->toBe(['en', 'es']);
 });
 
 test('it can check if a locale is supported', function () {
     Config::set('octane-localization.supported_locales', ['en', 'es']);
-    
-    $config = new LocalizationConfig();
-    
+
+    $config = new LocalizationConfig;
+
     expect($config->isSupportedLocale('en'))->toBeTrue();
     expect($config->isSupportedLocale('fr'))->toBeFalse();
     expect($config->isSupportedLocale(null))->toBeFalse();
