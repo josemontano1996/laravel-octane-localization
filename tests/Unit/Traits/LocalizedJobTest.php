@@ -5,7 +5,6 @@ declare(strict_types=1);
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationContextInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationManagerInterface;
 use Josemontano1996\LaravelOctaneLocalization\Traits\LocalizedJob;
-use Mockery;
 
 // Dummy class to use the trait
 class LocalizedJobStub
