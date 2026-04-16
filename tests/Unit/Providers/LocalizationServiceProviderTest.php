@@ -4,13 +4,16 @@ use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationConfigInterf
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationManagerInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationStateInterface;
 use Josemontano1996\LaravelOctaneLocalization\Middlewares\LivewireLocalizationBridge;
+use Josemontano1996\LaravelOctaneLocalization\Contracts\SeoHelperInterface;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationConfig;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationManager;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationState;
+use Josemontano1996\LaravelOctaneLocalization\Services\SeoHelper;
 
 it('binds interfaces to implementations', function () {
     expect(app(LocalizationConfigInterface::class))->toBeInstanceOf(LocalizationConfig::class);
     expect(app(LocalizationManagerInterface::class))->toBeInstanceOf(LocalizationManager::class);
+    expect(app(SeoHelperInterface::class))->toBeInstanceOf(SeoHelper::class);
 });
 
 it('registers localization state as a scoped service', function () {

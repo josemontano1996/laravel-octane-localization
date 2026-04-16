@@ -16,7 +16,7 @@ final readonly class SeoHelper implements SeoHelperInterface
     ) {}
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getAlternateLinks(): string
     {
@@ -31,7 +31,7 @@ final readonly class SeoHelper implements SeoHelperInterface
         // Add x-default pointing to the default locale
         $defaultLocale = $this->config->getDefaultLocale();
         $defaultUrl = $this->parser->getLocalizedUrl($currentUrl, $defaultLocale);
-        
+
         // Place x-default at the end as per convention
         $links[] = "<link rel=\"alternate\" hreflang=\"x-default\" href=\"{$defaultUrl}\" />";
 

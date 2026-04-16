@@ -16,6 +16,8 @@ use Josemontano1996\LaravelOctaneLocalization\Contracts\URLParserInterface;
 use Josemontano1996\LaravelOctaneLocalization\Drivers\CookieDriver;
 use Josemontano1996\LaravelOctaneLocalization\Middlewares\LivewireLocalizationBridge;
 use Josemontano1996\LaravelOctaneLocalization\Middlewares\LocalizationMiddleware;
+use Josemontano1996\LaravelOctaneLocalization\Registrars\RegisterBladeDirectives;
+use Josemontano1996\LaravelOctaneLocalization\Registrars\RegisterMacros;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationConfig;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationContext;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationManager;
@@ -23,8 +25,6 @@ use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationRedirector;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationState;
 use Josemontano1996\LaravelOctaneLocalization\Services\SeoHelper;
 use Josemontano1996\LaravelOctaneLocalization\Services\URLParser;
-use Josemontano1996\LaravelOctaneLocalization\Registrars\RegisterMacros;
-use Josemontano1996\LaravelOctaneLocalization\Registrars\RegisterBladeDirectives;
 use Override;
 
 class LocalizationServiceProvider extends ServiceProvider

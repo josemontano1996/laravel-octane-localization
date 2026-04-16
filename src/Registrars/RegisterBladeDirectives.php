@@ -39,7 +39,7 @@ class RegisterBladeDirectives
             $key = $parts[0] ?? '$code';
             $value = $parts[1] ?? '$data';
 
-            return "<?php foreach(app(" . LocalizationConfigInterface::class . "::class)->getSupportedLocales() as {$key} => {$value}): ?>";
+            return '<?php foreach(app('.LocalizationConfigInterface::class."::class)->getSupportedLocales() as {$key} => {$value}): ?>";
         });
 
         Blade::directive('endsupportedLocales', function () {
@@ -49,13 +49,13 @@ class RegisterBladeDirectives
         // 5. @localizedUrl('en')
         // Generates a URL for the current request but pointing to another locale.
         Blade::directive('localizedUrl', function (string $locale) {
-            return "<?php echo app(" . URLParserInterface::class . "::class)->getLocalizedUrl(url()->current(), {$locale}); ?>";
+            return '<?php echo app('.URLParserInterface::class."::class)->getLocalizedUrl(url()->current(), {$locale}); ?>";
         });
 
         // 6. @alternateLinks
         // Generates <link rel="alternate" ... /> tags for SEO in the <head>
         Blade::directive('alternateLinks', function () {
-            return "<?php echo app(" . SeoHelperInterface::class . "::class)->getAlternateLinks(); ?>";
+            return '<?php echo app('.SeoHelperInterface::class.'::class)->getAlternateLinks(); ?>';
         });
     }
 }
