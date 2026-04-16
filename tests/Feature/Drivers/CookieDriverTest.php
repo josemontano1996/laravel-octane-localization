@@ -1,9 +1,9 @@
 <?php
 
-use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationConfigInterface;
-use Josemontano1996\LaravelOctaneLocalization\Drivers\CookieDriver;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
+use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationConfigInterface;
+use Josemontano1996\LaravelOctaneLocalization\Drivers\CookieDriver;
 use Josemontano1996\LaravelOctaneLocalization\Tests\TestCase;
 
 it('detects locale from cookie', function () {
@@ -28,7 +28,7 @@ it('queues a cookie with the correct locale and expiration', function () {
 
     // Use collect() to find the cookie fluently
     $cookie = collect(Cookie::getQueuedCookies())
-        ->first(fn($c) => $c->getName() === $config->getParameterKey());
+        ->first(fn ($c) => $c->getName() === $config->getParameterKey());
 
     expect($cookie)->not->toBeNull();
     expect($cookie->getValue())->toBe(TestCase::ALTERNATIVE_LOCALE);

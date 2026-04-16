@@ -20,5 +20,5 @@ it('creates an exception for unsupported locales', function () {
 
     // 3. Assert
     expect($exception)->toBeInstanceOf(InvalidLocale::class)
-        ->and($exception->getMessage())->toBe("The locale [zh] is not in your supported list.");
+        ->and($exception->getMessage())->toBe('The locale [zh] is not in your supported list.');
 });

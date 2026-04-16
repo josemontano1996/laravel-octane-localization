@@ -8,7 +8,7 @@ it('creates a missing key exception', function () {
 
     // 2. Assert
     expect($exception)->toBeInstanceOf(InvalidConfiguration::class)
-        ->and($exception->getMessage())->toBe("The configuration key [octane-localization.parameter_key] is missing. This is required for the localization engine.");
+        ->and($exception->getMessage())->toBe('The configuration key [octane-localization.parameter_key] is missing. This is required for the localization engine.');
 });
 
 it('creates a missing supported locales exception', function () {
@@ -17,7 +17,7 @@ it('creates a missing supported locales exception', function () {
 
     // 2. Assert
     expect($exception)->toBeInstanceOf(InvalidConfiguration::class)
-        ->and($exception->getMessage())->toBe("You must define at least one locale in [octane-localization.supported_locales].");
+        ->and($exception->getMessage())->toBe('You must define at least one locale in [octane-localization.supported_locales].');
 });
 
 it('creates an invalid type exception', function () {
@@ -26,5 +26,5 @@ it('creates an invalid type exception', function () {
 
     // 2. Assert
     expect($exception)->toBeInstanceOf(InvalidConfiguration::class)
-        ->and($exception->getMessage())->toBe("The configuration key [octane-localization.supported_locales] must be of type [array].");
+        ->and($exception->getMessage())->toBe('The configuration key [octane-localization.supported_locales] must be of type [array].');
 });

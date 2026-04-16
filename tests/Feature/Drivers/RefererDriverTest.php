@@ -3,7 +3,6 @@
 use Illuminate\Http\Request;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\UrlParserInterface;
 use Josemontano1996\LaravelOctaneLocalization\Drivers\RefererDriver;
-use Josemontano1996\LaravelOctaneLocalization\Tests\TestCase;
 
 it('returns null if the referer header is missing', function () {
     // 1. Arrange
@@ -31,7 +30,7 @@ it('detects the locale using the url parser when referer is present', function (
         ->andReturn($expectedLocale);
 
     $driver = new RefererDriver($parser);
-    
+
     // Create request with the header
     $request = Request::create('/', 'GET');
     $request->headers->set('referer', $refererUrl);

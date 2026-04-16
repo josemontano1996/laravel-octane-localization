@@ -12,7 +12,7 @@ it('creates an invalid interface exception with the correct message', function (
 
     // 3. Assert
     expect($exception)->toBeInstanceOf(DriverException::class)
-        ->and($exception->getMessage())->toBe("The driver [InvalidDriver] must implement [LocaleDriverInterface]");
+        ->and($exception->getMessage())->toBe('The driver [InvalidDriver] must implement [LocaleDriverInterface]');
 });
 
 it('creates a not found exception with the correct message', function () {
@@ -24,5 +24,5 @@ it('creates a not found exception with the correct message', function () {
 
     // 3. Assert
     expect($exception)->toBeInstanceOf(DriverException::class)
-        ->and($exception->getMessage())->toBe("The localization driver class [MissingDriverClass] does not exist.");
+        ->and($exception->getMessage())->toBe('The localization driver class [MissingDriverClass] does not exist.');
 });

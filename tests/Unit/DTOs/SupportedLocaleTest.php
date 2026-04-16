@@ -7,7 +7,7 @@ it('can be created from an array', function () {
     $data = [
         'name' => 'Spanish',
         'native' => 'Español',
-        'region' => 'Spain'
+        'region' => 'Spain',
     ];
 
     $locale = SupportedLocale::fromArray($code, $data);

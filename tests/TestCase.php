@@ -22,6 +22,7 @@ class TestCase extends Orchestra
     public const string ALTERNATIVE_LOCALE = 'fr';
 
     public const string PARAMETER_KEY = 'locale';
+
     public const string EXCEPT_REDIRECTION_ROUTE = 'api/*';
 
     protected function getPackageProviders($app): array

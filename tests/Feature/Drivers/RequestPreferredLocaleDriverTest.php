@@ -1,15 +1,15 @@
 <?php
 
 use Illuminate\Http\Request;
-use Josemontano1996\LaravelOctaneLocalization\Drivers\RequestPreferredLocaleDriver;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationConfigInterface;
+use Josemontano1996\LaravelOctaneLocalization\Drivers\RequestPreferredLocaleDriver;
 use Josemontano1996\LaravelOctaneLocalization\Tests\TestCase;
 
 it('detects the preferred locale from the request headers using testcase constants', function () {
     // 1. Arrange
     $supported = TestCase::SUPPORTED_LOCALES;
-    $preferred = TestCase::FALLBACK_LOCALE;   
-    
+    $preferred = TestCase::FALLBACK_LOCALE;
+
     $config = Mockery::mock(LocalizationConfigInterface::class);
     $config->shouldReceive('getSupportedLocaleCodes')
         ->once()

@@ -1,15 +1,15 @@
 <?php
 
 use Illuminate\Http\Request;
-use Josemontano1996\LaravelOctaneLocalization\Drivers\UrlDriver;
-use Josemontano1996\LaravelOctaneLocalization\Contracts\UrlParserInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationConfigInterface;
+use Josemontano1996\LaravelOctaneLocalization\Contracts\UrlParserInterface;
+use Josemontano1996\LaravelOctaneLocalization\Drivers\UrlDriver;
 use Josemontano1996\LaravelOctaneLocalization\Tests\TestCase;
 
 it('returns the locale if the parser finds a supported locale in the URL', function () {
     // 1. Arrange
-    $locale = TestCase::ALTERNATIVE_LOCALE; 
-    
+    $locale = TestCase::ALTERNATIVE_LOCALE;
+
     $parser = Mockery::mock(UrlParserInterface::class);
     $parser->shouldReceive('getLocaleFromRequest')
         ->once()
@@ -34,7 +34,7 @@ it('returns the locale if the parser finds a supported locale in the URL', funct
 it('returns null if the parser finds an unsupported locale', function () {
     // 1. Arrange
     $unsupported = TestCase::UNSUPPORTED_LOCALE;
-    
+
     $parser = Mockery::mock(UrlParserInterface::class);
     $parser->shouldReceive('getLocaleFromRequest')
         ->once()
