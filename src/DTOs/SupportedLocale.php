@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Josemontano1996\LaravelOctaneLocalization\DataObjects;
+namespace Josemontano1996\LaravelOctaneLocalization\DTOs;
 
 final readonly class SupportedLocale
 {

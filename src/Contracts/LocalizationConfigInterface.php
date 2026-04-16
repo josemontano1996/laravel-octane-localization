@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Josemontano1996\LaravelOctaneLocalization\Contracts;
 
 // You MUST import the DTO here for the IDE to "see" it in the docblock
-use Josemontano1996\LaravelOctaneLocalization\DataObjects\SupportedLocale;
+use Josemontano1996\LaravelOctaneLocalization\DTOs\SupportedLocale;
 use Josemontano1996\LaravelOctaneLocalization\Exceptions\InvalidConfiguration;
 
 interface LocalizationConfigInterface

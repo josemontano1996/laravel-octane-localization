@@ -25,12 +25,15 @@ use Override;
 
 class LocalizationServiceProvider extends ServiceProvider
 {
-    private const string  CONFIG_PATH = __DIR__.'/../../config/localization.php';
+    public const string  CONFIG_PATH = __DIR__.'/../../config/octane-localization.php';
+
+    public const string CONFIG_KEY = 'octane-localization';
 
     #[Override]
     public function register()
     {
-        $this->mergeConfigFrom(self::CONFIG_PATH, 'localization');
+        $this->mergeConfigFrom(self::CONFIG_PATH, self::CONFIG_KEY);
+
         // 1. Core Services (Singletons)
         $this->app->singleton(LocalizationConfigInterface::class, LocalizationConfig::class);
         $this->app->singleton(UrlParserInterface::class, URLParser::class);
@@ -75,10 +78,9 @@ class LocalizationServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                self::CONFIG_PATH => config_path('localization.php'),
-            ], 'localization-config');
+                self::CONFIG_PATH => config_path(self::CONFIG_KEY.'.php'),
+            ], self::CONFIG_KEY);
         }
-
         // Lazy resolution
         $router = $this->app->make(Router::class);
         $router->prependMiddlewareToGroup('web', LivewireLocalizationBridge::class);

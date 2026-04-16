@@ -14,15 +14,15 @@ final class LocalizationConfig implements LocalizationConfigInterface
 
     public const string FALLBACK_LOCALE_CONFIG_KEY = 'app.fallback_locale';
 
-    public const string SUPPORTED_LOCALES_CONFIG_KEY = 'localization.supported_locales';
+    public const string SUPPORTED_LOCALES_CONFIG_KEY = 'octane-localization.supported_locales';
 
-    public const string PARAMETER_KEY_CONFIG_KEY = 'localization.parameter_key';
+    public const string PARAMETER_KEY_CONFIG_KEY = 'octane-localization.parameter_key';
 
-    public const string PRIMARY_DRIVERS_KEY = 'localization.drivers';
+    public const string PRIMARY_DRIVERS_KEY = 'octane-localization.drivers';
 
-    public const string COOKIE_TTL_KEY = 'localization.cookie_ttl';
+    public const string COOKIE_TTL_KEY = 'octane-localization.cookie_ttl';
 
-    public const string EXTENSIONS_KEY = 'localization.ext';
+    public const string EXTENSIONS_KEY = 'octane-localization.ext';
 
     private ?array $cachedSupported = null;
 
