@@ -8,9 +8,11 @@ In long-lived worker environments like Octane, managing request state is tricky.
 
 ## The Problem with Octane
 
-Traditional localization packages often rely on Singletons or global application state to remember the requested language. In **Laravel Octane**, the application boots once and stays in memory. If a user requests a page in Spanish (`/es`), a Singleton remembers "Spanish". If the next user requests the homepage (`/`), they might see it in Spanish because the state **leaked** between requests.
+Traditional localization packages often rely on Singletons or global application state to remember the requested language. In **Laravel Octane**, the application boots once and stays in memory. If a user requests a page in Spanish (`/es`), a Singleton remembering "Spanish" would cause the next user to see the homepage in Spanish because the state **leaked**.
 
-This package was built from the ground up to solve this by utilizing Laravel's **scoped container bindings**, ensuring that localization state is isolated per-request and safely flushed immediately after the response is sent.
+This package prevents state leakage by combining **scoped container bindings** and **singletons** efficiently:
+- **Stateful** components (like the detected Locale or current Request Context) are bound using Scoped bindings, giving each worker request a fresh, isolated state that is safely flushed.
+- **Stateless** components (like URL parsers and Helpers) remain Singletons to minimize memory overhead and maximize maximum performance, ensuring your Octane workers run at peak efficiency.
 
 ## Key Features
 
@@ -35,7 +37,7 @@ composer require josemontano1996/laravel-octane-localization
 You should publish the config file with:
 
 ```bash
-php artisan vendor:publish --tag="localization-config"
+php artisan vendor:publish --tag="octane-localization"
 ```
 
 ---
@@ -46,8 +48,9 @@ The published `config/octane-localization.php` file allows you to define your su
 
 ```php
 return [
-    'supported_locales' => ['en', 'es', 'fr'],
     'parameter_key' => 'locale',
+    'supported_locales' => ['en', 'es', 'fr'],
+    'cookie_ttl' => 1440,
     
     'drivers' => [
         \Josemontano1996\LaravelOctaneLocalization\Drivers\UrlDriver::class,
@@ -59,6 +62,16 @@ return [
         'active' => true,
         'except' => ['api/*', 'webhooks/*'],
     ],
+
+    'ext' => [
+        'livewire' => [
+            'drivers' => [
+                \Josemontano1996\LaravelOctaneLocalization\Drivers\RefererDriver::class,
+                \Josemontano1996\LaravelOctaneLocalization\Drivers\SessionDriver::class,
+                \Josemontano1996\LaravelOctaneLocalization\Drivers\RequestPreferredLocaleDriver::class,
+            ],
+        ],
+    ],
 ];
 ```
 
@@ -66,9 +79,24 @@ return [
 
 ## Usage
 
-### Middleware Setup
+### 1. Route Macro (`localizedWithPrefix`) (Recommended)
 
-To enable automatic detection, add the `LocalizationMiddleware` to your `web` middleware group in `app/Http/Kernel.php` (or `bootstrap/app.php` for Laravel 11+).
+The easiest way to set up localized routes is using the provided `localizedWithPrefix` macro. It automatically applies the `parameter_key` prefix (e.g., `/{locale}`) and attaches the `LocalizationMiddleware` for you.
+
+```php
+Route::localizedWithPrefix(function () {
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    });
+});
+```
+*Note: Because this macro automatically applies the `LocalizationMiddleware`, you do not need to register it globally.*
+
+### 2. Global Middleware Setup (Alternative)
+
+If you prefer to have the application automatically detect the locale for *all* routes without requiring a URL prefix (e.g., relying solely on Sessions or Cookies), you can add `LocalizationMiddleware` globally to your `web` middleware group. **Do not do this if you are exclusively using `Route::localizedWithPrefix`, as it will cause the middleware to run twice!**
+
+To enable automatic detection globally, add the `LocalizationMiddleware` to your `web` middleware group in `app/Http/Kernel.php` (or `bootstrap/app.php` for Laravel 11+).
 
 > [!IMPORTANT]
 > **Middleware Order Matters!**
@@ -85,19 +113,6 @@ To enable automatic detection, add the `LocalizationMiddleware` to your `web` mi
     ]);
 })
 ```
-
-### Route Macro (`localizedWithPrefix`)
-
-Instead of manually defining prefixes and middleware, use the provided `localizedWithPrefix` macro:
-
-```php
-Route::localizedWithPrefix(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    });
-});
-```
-This automatically prefixes the group with the `parameter_key` (e.g., `/{locale}`) and applies the `LocalizationMiddleware`.
 
 ### Blade Directives
 
@@ -162,37 +177,12 @@ Understanding how the `LocalizationManager` operates behind the scenes will help
 
 ### Livewire Integration
 
-The package is **100% Livewire safe by default**. You do not need to configure anything, add special traits to your components, or register middleware for Livewire. We automatically register a `LivewireLocalizationBridge` that seamlessly handles localization persistence and state syncing during all Livewire AJAX requests.
+The package features **smart Livewire support**. If it detects Livewire in your project, it seamlessly handles localization persistence and syncing during Livewire AJAX updates. **Crucially, it does not require Livewire as a composer dependency**, meaning it works flawlessly whether your project uses Livewire or not.
 
-### How Drivers & Livewire Interact
+When a Livewire AJAX payload is sent, standard URL drivers fail because the request goes to `/livewire/update` (missing the locale prefix). Our `LivewireLocalizationBridge` automatically intercepts these requests and switches to an isolated `ext.livewire.drivers` stack defined in your config.
 
-To understand why this is powerful, it helps to understand how the package handles standard vs. Livewire requests:
-
-#### 1. Standard HTTP Requests
-When a user visits a traditional route (e.g., `/es/dashboard`), the `LocalizationMiddleware` kicks in. It iterates through the standard `drivers` defined in your config (usually `UrlDriver` -> `SessionDriver`). 
-- The `UrlDriver` sees the `/es/` in the URL, successfully detects "Spanish", and then **persists** this locale to your session (or cookies) so the application "remembers" it.
-
-#### 2. The Livewire Problem
-Livewire operates by sending background AJAX POST requests to a central endpoint (usually `/livewire/update`). **This endpoint does not have a locale prefix in its URL.**
-If Livewire used the standard `UrlDriver`, it would fail to find a locale in `/livewire/update` and would quickly reset your application to the default language right in the middle of a user's interaction!
-
-#### 3. The Solution (`ext.livewire.drivers`)
-The `LivewireLocalizationBridge` intercepts these specific AJAX requests. Instead of using the standard driver stack, it intelligently switches to an isolated `ext.livewire.drivers` stack defined in `config/octane-localization.php`:
-
-```php
-'ext' => [
-    'livewire' => [
-        'drivers' => [
-            \Josemontano1996\LaravelOctaneLocalization\Drivers\RefererDriver::class,
-            \Josemontano1996\LaravelOctaneLocalization\Drivers\SessionDriver::class,
-            \Josemontano1996\LaravelOctaneLocalization\Drivers\RequestPreferredLocaleDriver::class,
-        ]
-    ],
-],
-```
-
-- **`RefererDriver` (The Hero)**: Because the Livewire AJAX request originates from a page the user is currently viewing, it sends a `Referer` header (e.g., `Referer: https://yoursite.com/es/dashboard`). The `RefererDriver` intercepts this header, extracts the `/es/`, and successfully restores the Spanish locale for the Livewire component.
-- **`SessionDriver` (The Fallback)**: If the referer is missing for any reason, the `SessionDriver` catches it, pulling the language exactly as it was persisted during the very first standard HTTP request.
+1. **`RefererDriver`**: It intercepts the `Referer` header (e.g., `https://yoursite.com/es/dashboard`), extracts the `/es/`, and restores the locale for the component.
+2. **`SessionDriver` / `CookieDriver`**: If the referer is missing, it falls back to your persisted storage perfectly.
 
 ### Queued Jobs (Restore & Reset Pattern)
 
@@ -234,7 +224,9 @@ class ProcessOrder implements ShouldQueue, LocalizationAwareJob
 
 ## Custom Drivers
 
-You can easily create custom drivers by implementing the `LocaleDriverInterface`.
+Create custom drivers by implementing the `LocaleDriverInterface`. 
+- `getLocale(Request)`: Contains the logic to read/detect the locale.
+- `storeLocale(string, Request)`: Contains the logic to persist the locale (e.g., to a session or database) so it can be remembered on subsequent requests without a prefix.
 
 ```php
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocaleDriverInterface;
@@ -249,7 +241,6 @@ class MyCustomDriver implements LocaleDriverInterface
 
     public function storeLocale(string $locale, Request $request): void
     {
-        // Example: Save the detected locale back to the user's profile
         if ($user = $request->user()) {
             $user->update(['preferred_locale' => $locale]);
         }
@@ -257,11 +248,11 @@ class MyCustomDriver implements LocaleDriverInterface
 }
 ```
 
-### Read-Only Drivers (The "No-Op" Pattern)
+### Read-Only Drivers (The "No-Op" Trait)
 
-Sometimes you want a driver to *detect* a locale (e.g., from a specialized API header or a Bot User-Agent) but you want to prevent the system from trying to "save" that locale back into the session or cookies.
+Sometimes you want a driver to *detect* a locale (e.g., from an API header, Bot User-Agent, or URL segment) but you **don't** want it to store or persist that locale.
 
-For these cases, you should use the `DoesNotPersistLocale` trait. This trait provides an empty implementation for `storeLocale`, effectively turning your driver into a **No-Op** for persistence:
+You can use the `DoesNotPersistLocale` trait to automatically fulfill the `storeLocale` requirement with a blank "No-Op" method. This ensures no locale storage is needed for the driver:
 
 ```php
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocaleDriverInterface;
@@ -270,7 +261,7 @@ use Illuminate\Http\Request;
 
 class BotDetectionDriver implements LocaleDriverInterface
 {
-    use DoesNotPersistLocale; // Automatically fulfills the interface with a No-Op
+    use DoesNotPersistLocale;
 
     public function getLocale(Request $request): ?string
     {
