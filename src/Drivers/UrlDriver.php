@@ -23,7 +23,7 @@ final readonly class UrlDriver implements LocaleDriverInterface
     {
         $segment = $this->urlParser->getLocaleFromRequest($request);
 
-        if ($this->config->isSupportedLocale($segment)) {
+        if (filled($segment) && $this->config->isSupportedLocale($segment)) {
             return $segment;
         }
 
