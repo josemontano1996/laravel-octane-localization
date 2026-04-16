@@ -6,9 +6,9 @@ namespace Josemontano1996\LaravelOctaneLocalization\Services;
 
 use Illuminate\Http\Request;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationConfigInterface;
-use Josemontano1996\LaravelOctaneLocalization\Contracts\UrlParserInterface;
+use Josemontano1996\LaravelOctaneLocalization\Contracts\URLParserInterface;
 
-final readonly class URLParser implements UrlParserInterface
+final readonly class URLParser implements URLParserInterface
 {
     public function __construct(private LocalizationConfigInterface $config) {}
 

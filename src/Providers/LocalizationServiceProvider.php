@@ -11,7 +11,7 @@ use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationContextInter
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationManagerInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationRedirectorInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationStateInterface;
-use Josemontano1996\LaravelOctaneLocalization\Contracts\UrlParserInterface;
+use Josemontano1996\LaravelOctaneLocalization\Contracts\URLParserInterface;
 use Josemontano1996\LaravelOctaneLocalization\Drivers\CookieDriver;
 use Josemontano1996\LaravelOctaneLocalization\Middlewares\LivewireLocalizationBridge;
 use Josemontano1996\LaravelOctaneLocalization\Middlewares\LocalizationMiddleware;
@@ -36,7 +36,7 @@ class LocalizationServiceProvider extends ServiceProvider
 
         // 1. Core Services (Singletons)
         $this->app->singleton(LocalizationConfigInterface::class, LocalizationConfig::class);
-        $this->app->singleton(UrlParserInterface::class, URLParser::class);
+        $this->app->singleton(URLParserInterface::class, URLParser::class);
         $this->app->singleton(LocalizationRedirectorInterface::class, LocalizationRedirector::class);
         $this->app->singleton(LocalizationManagerInterface::class, LocalizationManager::class);
         $this->app->singleton(LocalizationContextInterface::class, LocalizationContext::class);

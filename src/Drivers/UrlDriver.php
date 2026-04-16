@@ -7,7 +7,7 @@ namespace Josemontano1996\LaravelOctaneLocalization\Drivers;
 use Illuminate\Http\Request;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocaleDriverInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationConfigInterface;
-use Josemontano1996\LaravelOctaneLocalization\Contracts\UrlParserInterface;
+use Josemontano1996\LaravelOctaneLocalization\Contracts\URLParserInterface;
 use Josemontano1996\LaravelOctaneLocalization\Drivers\Concerns\DoesNotPersistLocale;
 
 final readonly class UrlDriver implements LocaleDriverInterface
@@ -16,7 +16,7 @@ final readonly class UrlDriver implements LocaleDriverInterface
 
     public function __construct(
         private LocalizationConfigInterface $config,
-        private UrlParserInterface $urlParser
+        private URLParserInterface $urlParser
     ) {}
 
     public function getLocale(Request $request): ?string

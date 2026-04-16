@@ -9,14 +9,14 @@ use Illuminate\Http\Request;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationConfigInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationRedirectorInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationStateInterface;
-use Josemontano1996\LaravelOctaneLocalization\Contracts\UrlParserInterface;
+use Josemontano1996\LaravelOctaneLocalization\Contracts\URLParserInterface;
 
 final readonly class LocalizationRedirector implements LocalizationRedirectorInterface
 {
     public function __construct(
         private LocalizationConfigInterface $config,
         private LocalizationStateInterface $state,
-        private UrlParserInterface $urlParser,
+        private URLParserInterface $urlParser,
     ) {}
 
     public function shouldRedirect(Request $request): bool

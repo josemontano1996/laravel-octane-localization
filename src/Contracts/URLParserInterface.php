@@ -6,7 +6,7 @@ namespace Josemontano1996\LaravelOctaneLocalization\Contracts;
 
 use Illuminate\Http\Request;
 
-interface UrlParserInterface
+interface URLParserInterface
 {
     /**
      * Extract the locale candidate from a Request object.
