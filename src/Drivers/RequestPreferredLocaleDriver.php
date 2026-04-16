@@ -21,6 +21,15 @@ final readonly class RequestPreferredLocaleDriver implements LocaleDriverInterfa
     {
         $supported = $this->config->getSupportedLocaleCodes();
 
-        return $request->getPreferredLanguage($supported);
+        $preferred = $request->getPreferredLanguage($supported);
+
+        // Symfony returns the first element of $supported if no match is found.
+        // We check if $preferred actually exists in the browser's languages.
+        // getLanguages() returns all locales from the header sorted by priority.
+        if (! \in_array($preferred, $request->getLanguages())) {
+            return null;
+        }
+
+        return $preferred;
     }
 }
