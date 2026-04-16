@@ -11,6 +11,7 @@ use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationContextInter
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationManagerInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationRedirectorInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationStateInterface;
+use Josemontano1996\LaravelOctaneLocalization\Contracts\SeoHelperInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\URLParserInterface;
 use Josemontano1996\LaravelOctaneLocalization\Drivers\CookieDriver;
 use Josemontano1996\LaravelOctaneLocalization\Middlewares\LivewireLocalizationBridge;
@@ -20,7 +21,10 @@ use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationContext;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationManager;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationRedirector;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationState;
+use Josemontano1996\LaravelOctaneLocalization\Services\SeoHelper;
 use Josemontano1996\LaravelOctaneLocalization\Services\URLParser;
+use Josemontano1996\LaravelOctaneLocalization\Registrars\RegisterMacros;
+use Josemontano1996\LaravelOctaneLocalization\Registrars\RegisterBladeDirectives;
 use Override;
 
 class LocalizationServiceProvider extends ServiceProvider
@@ -40,6 +44,7 @@ class LocalizationServiceProvider extends ServiceProvider
         $this->app->singleton(LocalizationRedirectorInterface::class, LocalizationRedirector::class);
         $this->app->singleton(LocalizationManagerInterface::class, LocalizationManager::class);
         $this->app->singleton(LocalizationContextInterface::class, LocalizationContext::class);
+        $this->app->singleton(SeoHelperInterface::class, SeoHelper::class);
 
         // 2. Data/State (Scoped - Fresh for every request)
         $this->app->scoped(LocalizationStateInterface::class, LocalizationState::class);
@@ -85,5 +90,7 @@ class LocalizationServiceProvider extends ServiceProvider
         $router = $this->app->make(Router::class);
         $router->prependMiddlewareToGroup('web', LivewireLocalizationBridge::class);
 
+        RegisterMacros::register();
+        RegisterBladeDirectives::register();
     }
 }
