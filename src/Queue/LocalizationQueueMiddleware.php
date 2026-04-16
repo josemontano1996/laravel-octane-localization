@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Josemontano1996\LaravelOctaneLocalization\Queue;
 
+use Closure;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\Support\LocalizationAwareJob;
 
 class LocalizationQueueMiddleware
@@ -11,7 +12,7 @@ class LocalizationQueueMiddleware
     /**
      * Handle the queued job.
      */
-    public function handle(mixed $job, callable $next): void
+    public function handle(object $job, Closure $next): void
     {
         if ($job instanceof LocalizationAwareJob) {
             $job->restoreLocalization();
