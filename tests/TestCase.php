@@ -11,18 +11,18 @@ use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
 {
-    protected const string DEFAULT_LOCALE = 'en';
+    public const string DEFAULT_LOCALE = 'en';
 
-    protected const string FALLBACK_LOCALE = 'es';
+    public const string FALLBACK_LOCALE = 'es';
 
-    protected const array SUPPORTED_LOCALES = ['en', 'es', 'fr'];
+    public const array SUPPORTED_LOCALES = ['en', 'es', 'fr'];
 
-    protected const string UNSUPPORTED_LOCALE = 'de';
+    public const string UNSUPPORTED_LOCALE = 'de';
 
-    protected const string ALTERNATIVE_LOCALE = 'fr';
+    public const string ALTERNATIVE_LOCALE = 'fr';
 
-    protected const string PARAMETER_KEY = 'locale';
-    protected const string EXCEPT_REDIRECTION_ROUTE = 'api/*';
+    public const string PARAMETER_KEY = 'locale';
+    public const string EXCEPT_REDIRECTION_ROUTE = 'api/*';
 
     protected function getPackageProviders($app): array
     {
