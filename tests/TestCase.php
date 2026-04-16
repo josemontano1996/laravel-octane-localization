@@ -34,6 +34,7 @@ class TestCase extends Orchestra
 
     public function getEnvironmentSetUp($app): void
     {
+        $app['router']->middlewareGroup('web', []);
         // 1. Basic Laravel Setup
         $app['config']->set('database.default', 'testing');
         $app['config']->set('app.locale', self::DEFAULT_LOCALE);
