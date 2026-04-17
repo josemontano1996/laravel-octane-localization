@@ -76,6 +76,7 @@ return [
 ```
 
 - `default_locale` - the locale used when no supported locale is detected and the locale restored by Octane/queue resets.
+- `parameter_key` - the locale key used both for localized URL routes and for session/cookie storage drivers.
 
 ## Usage
 
