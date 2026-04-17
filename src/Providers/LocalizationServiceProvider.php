@@ -94,9 +94,11 @@ class LocalizationServiceProvider extends ServiceProvider
 
         RegisterMacros::register();
         RegisterBladeDirectives::register();
+        $localeManager = $this->app->make(LocalizationManagerInterface::class);
+        $localeManager->reset();
 
-        Queue::before(function (JobProcessing $event) {
-        $this->app->make(LocalizationManagerInterface::class)->reset();
-    });
+        Queue::before(function (JobProcessing $event) use ($localeManager) {
+            $localeManager->reset();
+        });
     }
 }
