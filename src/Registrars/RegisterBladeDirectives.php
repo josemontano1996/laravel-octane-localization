@@ -16,6 +16,10 @@ class RegisterBladeDirectives
      */
     public static function register(): void
     {
+        Blade::directive('t', function ($expression) {
+            return "<?php echo __($expression); ?>";
+        });
+
         // 1. @currentLocale
         // Outputs the current application locale string (e.g. 'en')
         Blade::directive('currentLocale', function () {
