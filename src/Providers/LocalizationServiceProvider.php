@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Josemontano1996\LaravelOctaneLocalization\Providers;
 
+use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationConfigInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationContextInterface;
@@ -92,5 +94,9 @@ class LocalizationServiceProvider extends ServiceProvider
 
         RegisterMacros::register();
         RegisterBladeDirectives::register();
+
+        Queue::before(function (JobProcessing $event) {
+        $this->app->make(LocalizationManagerInterface::class)->reset();
+    });
     }
 }

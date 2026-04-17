@@ -82,8 +82,8 @@ final readonly class LocalizationManager implements LocalizationManagerInterface
             Number::useLocale($locale);
         }
     }
-
-    public function flush(): void
+    
+    public function reset(): void
     {
         $defaultLocale = $this->config->getDefaultLocale();
 
@@ -94,11 +94,10 @@ final readonly class LocalizationManager implements LocalizationManagerInterface
         if (class_exists(Carbon::class)) {
             Carbon::setLocale($defaultLocale);
         }
-        URL::defaults([$this->config->getParameterKey() => null]);
+
+        URL::defaults([$this->config->getParameterKey() => $defaultLocale]);
 
         App::setLocale($defaultLocale);
-
-        $this->state->reset();
     }
 
     private function resolveDriver(string $class): LocaleDriverInterface

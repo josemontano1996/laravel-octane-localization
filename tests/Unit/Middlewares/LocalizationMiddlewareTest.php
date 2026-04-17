@@ -132,5 +132,5 @@ it('calls flush even if the request throws an exception', function () {
         $middleware->terminate($request, new Response);
     }
 
-    // Mockery will verify that flush() was called exactly once
+    // Mockery will verify that reset() was called exactly once
 });

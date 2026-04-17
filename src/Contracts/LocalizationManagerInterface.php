@@ -36,5 +36,5 @@ interface LocalizationManagerInterface
      * Reset the application state to defaults.
      * Essential for preventing state leakage in Octane environments.
      */
-    public function flush(): void;
+    public function reset(): void;
 }

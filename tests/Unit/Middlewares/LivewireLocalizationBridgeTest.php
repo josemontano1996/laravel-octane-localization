@@ -105,5 +105,5 @@ it('flushes manager state even if the Livewire request crashes', function () {
         $middleware->terminate($request, new Response);
     }
 
-    // Mockery asserts flush() was called
+    // Mockery asserts reset() was called
 });

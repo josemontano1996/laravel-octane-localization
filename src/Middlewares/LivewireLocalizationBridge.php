@@ -30,14 +30,6 @@ final readonly class LivewireLocalizationBridge
 
         return $next($request);
     }
-
-    public function terminate(Request $request, Response $response): void
-    {
-        if ($this->isLivewire($request)) {
-            $this->manager->flush();
-        }
-    }
-
     /**
      * Determine if the request is coming from Livewire.
      */

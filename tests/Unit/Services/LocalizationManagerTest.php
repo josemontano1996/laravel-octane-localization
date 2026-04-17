@@ -95,7 +95,7 @@ test('it can flush application state', function () {
 
     expect(App::getLocale())->toBe('es');
 
-    $this->manager->flush();
+    $this->manager->reset();
 
     expect($this->state->get())->toBeNull();
 

@@ -6,7 +6,7 @@ When working on this codebase, you must understand how this package manages loca
 When a request enters the application, the `LocalizationManager` coordinates the lifecycle:
 1. **Detect (`detect(Request)`):** Iterates through drivers defined in config to find a locale.
 2. **Sync (`syncWithApplication()`):** Modifies the global facade states: `App::setLocale`, `URL::defaults`, `Carbon`, etc. This state is strictly bound to the current worker request.
-3. **Flush (`flush()`):** The most critical step. Once the response is sent, the Manager absolutely must wipe the global application facades clean and clear the localized scoped bounds so the next user's Octane request receives a fresh, unaltered default state.
+3. **Flush (`reset()`):** The most critical step. Once the response is sent, the Manager absolutely must wipe the global application facades clean and clear the localized scoped bounds so the next user's Octane request receives a fresh, unaltered default state.
 
 ## 2. Container Strategy
 To prevent Octane leakages:

@@ -33,11 +33,6 @@ final readonly class LocalizationMiddleware
         return $response;
     }
 
-    public function terminate(Request $request, Response $response): void
-    {
-        $this->manager->flush();
-    }
-
     private function addLocalizationHeaders(Response $response): void
     {
         $locale = app()->getLocale();

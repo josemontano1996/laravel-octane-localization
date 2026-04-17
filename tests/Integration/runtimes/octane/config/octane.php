@@ -1,5 +1,6 @@
 <?php
 
+use Josemontano1996\LaravelOctaneLocalization\Listeners\ResetLocalizationStateListener;
 use Laravel\Octane\Contracts\OperationTerminated;
 use Laravel\Octane\Events\RequestHandled;
 use Laravel\Octane\Events\RequestReceived;
@@ -24,12 +25,6 @@ use Laravel\Octane\Listeners\StopWorkerIfNecessary;
 use Laravel\Octane\Octane;
 
 return [
-    'swoole' => [
-        // 'options' => [
-        //     'hook_flags' => SWOOLE_HOOK_ALL,
-        // ],
-    ],
-
     /*
     |--------------------------------------------------------------------------
     | Octane Server
@@ -43,7 +38,7 @@ return [
     |
     */
 
-    'server' => env('OCTANE_SERVER', 'swoole'),
+    'server' => env('OCTANE_SERVER', 'frankenphp'),
 
     /*
     |--------------------------------------------------------------------------
@@ -78,6 +73,7 @@ return [
         RequestReceived::class => [
             ...Octane::prepareApplicationForNextOperation(),
             ...Octane::prepareApplicationForNextRequest(),
+                ResetLocalizationStateListener::class, 
             //
         ],
 

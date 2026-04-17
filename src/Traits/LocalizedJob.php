@@ -22,6 +22,6 @@ trait LocalizedJob
 
     public function resetLocalization(): void
     {
-        app(LocalizationManagerInterface::class)->flush();
+        app(LocalizationManagerInterface::class)->reset();
     }
 }

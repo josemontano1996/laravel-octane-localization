@@ -2,18 +2,17 @@
 
 [![GitHub Tests Action Status](https://github.com/josemontano1996/laravel-octane-localization/actions/workflows/run-tests.yml/badge.svg)](https://github.com/josemontano1996/laravel-octane-localization/actions)
 
-
 A state-aware, high-performance localization package for Laravel, meticulously designed for **Laravel Octane** (also compatible with traditional FPM). 
 
-In long-lived worker environments like Octane, managing request state is tricky. This package solves the "leaking locale" problem by using scoped container bindings, ensuring every request gets its own correctly detected and isolated localization state.
+In long-lived worker environments like Octane, managing request state is tricky. This package solves the "leaking locale" problem by using scoped container bindings and explicit lifecycle resets, ensuring every request gets its own correctly detected and isolated localization state.
 
 ## The Problem with Octane
 
 Traditional localization packages often rely on Singletons or global application state to remember the requested language. In **Laravel Octane**, the application boots once and stays in memory. If a user requests a page in Spanish (`/es`), a Singleton remembering "Spanish" would cause the next user to see the homepage in Spanish because the state **leaked**.
 
-This package prevents state leakage by combining **scoped container bindings** and **singletons** efficiently:
-- **Stateful** components (like the detected Locale or current Request Context) are bound using Scoped bindings, giving each worker request a fresh, isolated state that is safely flushed.
-- **Stateless** components (like URL parsers and Helpers) remain Singletons to minimize memory overhead and maximize maximum performance, ensuring your Octane workers run at peak efficiency.
+This package prevents state leakage by combining **scoped container bindings** and **worker listeners**:
+- **Stateful** components (like the detected Locale or current Request Context) are bound using Scoped bindings, giving each worker request a fresh, isolated state.
+- **Explicit Resets**: Instead of relying on middleware termination (which can be bypassed during redirects or crashes), we hook directly into Octane's internal events to scrub the environment.
 
 ## Key Features
 
@@ -21,68 +20,64 @@ This package prevents state leakage by combining **scoped container bindings** a
 - 🛠️ **Extensible Drivers**: Detect locale from URL, Session, Cookies, or Browser headers.
 - 🌊 **Livewire Support**: Seamlessly syncs localization for Livewire components.
 - 📂 **Queue Support**: Re-hydrates localization context in queued jobs via a simple interface.
-- 🎨 **Blade Directives**: Built-in directives for easy UI localization.
 - 🚀 **SEO Ready**: Generates `hreflang` alternate links with a single directive.
-- ⚡ **Performance First**: Minimal overhead with optimized detection logic.
 
 ---
 
-## Installation
+## Installation & Critical Setup
 
-You can install the package via composer:
-
+### 1. Install via Composer
 ```bash
 composer require josemontano1996/laravel-octane-localization
 ```
 
-You should publish the config file with:
+### 2. Register the Octane Listener (Required)
+To ensure that static states (like Number, Carbon, and URL::defaults) are scrubbed between requests, you must register the `ResetLocalizationStateListener` listener in your `config/octane.php`.
+
+```php
+// config/octane.php
+
+'listeners' => [
+    RequestReceived::class => [
+        ...Octane::prepareApplicationForNextOperation(),
+        ...Octane::prepareApplicationForNextRequest(),
+        \Josemontano1996\LaravelOctaneLocalization\Listeners\ResetLocalizationStateListener::class,
+    ],
+],
+```
+
+### 3. Setup Queue Worker Reset
+Queue workers are also long-lived processes and are handled automatically by the package.
+Unlike Octane, which requires manual listener registration, this package hooks into the Laravel Queue lifecycle and resets the localization state before each job starts.
+
+This happens automatically via the package service provider, so your worker always begins with a clean default locale. That means even non-localized queued jobs do not leak locale state from a previous execution.
+
+## Configuration
+Publish the config file:
 
 ```bash
 php artisan vendor:publish --tag="octane-localization"
 ```
 
----
-
-## Configuration
-
-The published `config/octane-localization.php` file allows you to define your supported locales and the order of drivers used for detection.
+The `config/octane-localization.php` file allows you to define your supported locales and the order of drivers used for detection.
 
 ```php
 return [
     'parameter_key' => 'locale',
     'supported_locales' => ['en', 'es', 'fr'],
-    'cookie_ttl' => 1440,
     
     'drivers' => [
         \Josemontano1996\LaravelOctaneLocalization\Drivers\UrlDriver::class,
         \Josemontano1996\LaravelOctaneLocalization\Drivers\SessionDriver::class,
         \Josemontano1996\LaravelOctaneLocalization\Drivers\RequestPreferredLocaleDriver::class,
     ],
-    
-    'redirections' => [
-        'active' => true,
-        'except' => ['api/*', 'webhooks/*'],
-    ],
-
-    'ext' => [
-        'livewire' => [
-            'drivers' => [
-                \Josemontano1996\LaravelOctaneLocalization\Drivers\RefererDriver::class,
-                \Josemontano1996\LaravelOctaneLocalization\Drivers\SessionDriver::class,
-                \Josemontano1996\LaravelOctaneLocalization\Drivers\RequestPreferredLocaleDriver::class,
-            ],
-        ],
-    ],
 ];
 ```
 
----
-
 ## Usage
 
-### 1. Route Macro (`localizedWithPrefix`) (Recommended)
-
-The easiest way to set up localized routes is using the provided `localizedWithPrefix` macro. It automatically applies the `parameter_key` prefix (e.g., `/{locale}`) and attaches the `LocalizationMiddleware` for you.
+### Route Macro (localizedWithPrefix)
+The easiest way to set up localized routes is using the provided macro. It automatically applies the parameter_key prefix (e.g., /{locale}) and attaches the necessary middleware.
 
 ```php
 Route::localizedWithPrefix(function () {
@@ -91,121 +86,50 @@ Route::localizedWithPrefix(function () {
     });
 });
 ```
-*Note: Because this macro automatically applies the `LocalizationMiddleware`, you do not need to register it globally.*
-
-### 2. Global Middleware Setup (Alternative)
-
-If you prefer to have the application automatically detect the locale for *all* routes without requiring a URL prefix (e.g., relying solely on Sessions or Cookies), you can add `LocalizationMiddleware` globally to your `web` middleware group. **Do not do this if you are exclusively using `Route::localizedWithPrefix`, as it will cause the middleware to run twice!**
-
-To enable automatic detection globally, add the `LocalizationMiddleware` to your `web` middleware group in `app/Http/Kernel.php` (or `bootstrap/app.php` for Laravel 11+).
-
-> [!IMPORTANT]
-> **Middleware Order Matters!**
-> 
-> The middleware must run:
-> 1. **After** `StartSession` (if using the Session driver).
-> 2. **Before** `SubstituteBindings` (to ensure route parameters are resolved with the correct locale).
-
-```php
-// Laravel 11+ Example (bootstrap/app.php)
-->withMiddleware(function (Middleware $middleware) {
-    $middleware->web(prepend: [
-        \Josemontano1996\LaravelOctaneLocalization\Middlewares\LocalizationMiddleware::class,
-    ]);
-})
-```
 
 ### Blade Directives
 
-We provide developer-friendly Blade directives to streamline your views:
-
-| Directive | Description | Example |
-|---|---|---|
-| `@currentLocale` | Outputs the current application locale | `Lang: @currentLocale` |
-| `@isLocale('en')` | Conditional block. Supports `@elseisLocale` and `@else` | `@isLocale('es') ¡Hola! @else Hello! @endisLocale` |
-| `@supportedLocales` | Iterates over all supported locales | `@supportedLocales($code, $data) {{ $code }} @endsupportedLocales` |
-| `@localizedUrl('es')` | Returns the current URL in another locale | `<a href="@localizedUrl('es')">Spanish</a>` |
-| `@alternateLinks` | Generates SEO `hreflang` tags (see below) | `<head> @alternateLinks </head>` |
-
-#### Language Switcher Example
-
-Combining these directives makes building a language switcher effortless:
-
-```blade
-<div class="language-switcher">
-    <span>Current: @currentLocale</span>
-    <ul>
-        @supportedLocales($code, $data)
-            @isLocale($code)
-                <li><strong>{{ $data['name'] ?? $code }} (Active)</strong></li>
-            @else
-                <li><a href="@localizedUrl($code)">{{ $data['name'] ?? $code }}</a></li>
-            @endisLocale
-        @endsupportedLocales
-    </ul>
-</div>
-```
-
-### SEO Alternate Links
-
-Proper international SEO requires telling search engines about the localized versions of your pages. You can automatically generate `<link rel="alternate" hreflang="...">` tags for your `<head>` using:
-
-```blade
-<head>
-    <title>My App</title>
-    @alternateLinks
-</head>
-```
-*This automatically includes the `x-default` tag pointing to your application's default fallback locale.*
-
----
+| Directive | Description |
+|-----------|-------------|
+| `@currentLocale` | Outputs the current application locale |
+| `@isLocale('en')` | Conditional block for specific languages |
+| `@supportedLocales` | Iterates over all supported locales |
+| `@localizedUrl('es')` | Returns the current URL switched to another locale |
+| `@alternateLinks` | Generates SEO hreflang tags for the `<head>` |
 
 ## The Localization Lifecycle
-
-Understanding how the `LocalizationManager` operates behind the scenes will help you master the package. The lifecycle involves three main steps during a request:
-
-1. **`detect(Request $request)`**: The manager runs through your configured driver stack to find a supported locale. Once found, it saves it in the scoped `LocalizationState`. crucially, it calls `storeLocale()` on all primary drivers so they can persist it (e.g., saving to a session or cookie).
-2. **`syncWithApplication()`**: The manager pushes the detected locale out to the rest of the framework. It automatically updates:
-    - `App::setLocale()`
-    - `URL::defaults()` (so future generated URLs automatically have the correct prefix)
-    - `Carbon::setLocale()` (if installed)
-    - `Number::useLocale()` (if installed)
-3. **`flush()`**: Essential for Octane! After the response is sent to the browser, the manager completely resets the state, URL defaults, and framework facades back to the system default, ensuring **zero state leakage** for the next worker request.
-
----
+The `LocalizationManager` manages the environment through three main phases:
+- `detect(Request $request)`: Runs your configured drivers to find the target locale.
+- `syncWithApplication()`: Pushes the locale to `App::setLocale()`, `URL::defaults()`, Carbon, and Number.
+- `reset()`: Triggered by Octane and Queue listeners. It flushes the state back to the system default, ensuring zero state leakage for the next worker task.
 
 ## Advanced Features
 
-### Livewire Integration
+### Queue Worker Reset
+Queue workers are long-lived processes and can reuse the same worker instance for multiple jobs. This package automatically resets the localization state before each queued job starts by listening to Laravel's `JobProcessing` event.
 
-The package features **smart Livewire support**. If it detects Livewire in your project, it seamlessly handles localization persistence and syncing during Livewire AJAX updates. **Crucially, it does not require Livewire as a composer dependency**, meaning it works flawlessly whether your project uses Livewire or not.
+That means:
+- every queued job begins in the default locale,
+- no locale state is carried over from a previous job,
+- you do not need to register an additional queue listener manually.
 
-When a Livewire AJAX payload is sent, standard URL drivers fail because the request goes to `/livewire/update` (missing the locale prefix). Our `LivewireLocalizationBridge` automatically intercepts these requests and switches to an isolated `ext.livewire.drivers` stack defined in your config.
+### Localized Jobs (Persistence)
+If you want a specific job to run in the original locale of the user who triggered it (for example, sending a French invoice), use the `LocalizationAwareJob` interface together with the `LocalizedJob` trait and `LocalizationQueueMiddleware`.
 
-1. **`RefererDriver`**: It intercepts the `Referer` header (e.g., `https://yoursite.com/es/dashboard`), extracts the `/es/`, and restores the locale for the component.
-2. **`SessionDriver` / `CookieDriver`**: If the referer is missing, it falls back to your persisted storage perfectly.
+The interface is available at:
+`Josemontano1996\LaravelOctaneLocalization\Contracts\Support\LocalizationAwareJob`
 
-### Queued Jobs (Restore & Reset Pattern)
+The trait is available at:
+`Josemontano1996\LaravelOctaneLocalization\Traits\LocalizedJob`
 
-When a job is pushed to the queue, the current localization "context" needs to travel with it. We handle this using a **Restore & Reset** pattern to ensure that the worker's state is correctly set before the job runs and safely cleaned up afterward.
-
-To enable this:
-1. Implement the `LocalizationAwareJob` contract.
-2. Use the `LocalizedJob` trait (which provides the implementation).
-3. Add the `LocalizationQueueMiddleware` to the job.
-
-#### How it works
-The `LocalizationQueueMiddleware` detects if a job is "localization aware" and performs the following lifecycle:
-- **Before execution**: It calls `restoreLocalization()`, which pulls the locale from the Laravel 11 Context and syncs it with the worker's application state.
-- **After execution (using `try...finally`)**: It calls `resetLocalization()`, which flushes the worker's state back to the system default, preventing any "locale leakage" to the next job in the queue.
+Use them like this:
 
 ```php
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\Support\LocalizationAwareJob;
 use Josemontano1996\LaravelOctaneLocalization\Queue\LocalizationQueueMiddleware;
 use Josemontano1996\LaravelOctaneLocalization\Traits\LocalizedJob;
 
-class ProcessOrder implements ShouldQueue, LocalizationAwareJob
+class SendInvoice implements ShouldQueue, LocalizationAwareJob
 {
     use LocalizedJob;
 
@@ -213,77 +137,42 @@ class ProcessOrder implements ShouldQueue, LocalizationAwareJob
     {
         return [new LocalizationQueueMiddleware()];
     }
-
-    public function handle()
-    {
-        // This runs with the original request's locale!
-    }
 }
 ```
 
----
+### How it works
+`LocalizationQueueMiddleware` wraps the queued job execution and performs:
+- `restoreLocalization()` before the job runs, restoring the locale saved in Laravel 11 Context,
+- the job handler execution,
+- `resetLocalization()` in a `finally` block so the worker returns to a clean state.
 
-## Custom Drivers
-
-Create custom drivers by implementing the `LocaleDriverInterface`. 
-- `getLocale(Request)`: Contains the logic to read/detect the locale.
-- `storeLocale(string, Request)`: Contains the logic to persist the locale (e.g., to a session or database) so it can be remembered on subsequent requests without a prefix.
+### Custom LocalizationAwareJob Support
+If you want to implement the interface manually instead of using the trait, your job class must define both methods and call the same manager/context services internally.
 
 ```php
-use Josemontano1996\LaravelOctaneLocalization\Contracts\LocaleDriverInterface;
-use Illuminate\Http\Request;
+use Josemontano1996\LaravelOctaneLocalization\Contracts\Support\LocalizationAwareJob;
+use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationContextInterface;
+use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationManagerInterface;
 
-class MyCustomDriver implements LocaleDriverInterface
+class SendInvoice implements ShouldQueue, LocalizationAwareJob
 {
-    public function getLocale(Request $request): ?string
+    public function restoreLocalization(): void
     {
-        return $request->user()?->preferred_locale;
-    }
+        $context = app(LocalizationContextInterface::class);
+        $manager = app(LocalizationManagerInterface::class);
 
-    public function storeLocale(string $locale, Request $request): void
-    {
-        if ($user = $request->user()) {
-            $user->update(['preferred_locale' => $locale]);
+        if ($locale = $context->get()) {
+            $manager->setLocale($locale);
+            $manager->syncWithApplication();
         }
     }
-}
-```
 
-### Read-Only Drivers (The "No-Op" Trait)
-
-Sometimes you want a driver to *detect* a locale (e.g., from an API header, Bot User-Agent, or URL segment) but you **don't** want it to store or persist that locale.
-
-You can use the `DoesNotPersistLocale` trait to automatically fulfill the `storeLocale` requirement with a blank "No-Op" method. This ensures no locale storage is needed for the driver:
-
-```php
-use Josemontano1996\LaravelOctaneLocalization\Contracts\LocaleDriverInterface;
-use Josemontano1996\LaravelOctaneLocalization\Drivers\Concerns\DoesNotPersistLocale;
-use Illuminate\Http\Request;
-
-class BotDetectionDriver implements LocaleDriverInterface
-{
-    use DoesNotPersistLocale;
-
-    public function getLocale(Request $request): ?string
+    public function resetLocalization(): void
     {
-        // Detection logic here...
+        app(LocalizationManagerInterface::class)->reset();
     }
 }
 ```
 
----
-
-## Testing
-
-Run the tests with:
-
-```bash
-composer test
-```
-*(Uses Pest PHP under the hood)*
-
----
-
 ## License
-
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+The MIT License (MIT). Please see License File for more information.
