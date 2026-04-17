@@ -6,26 +6,39 @@ description: Guidelines and patterns for working with the laravel-octane-localiz
 # Laravel Octane Localization
 
 ## When to use this skill
-Use this skill when initializing localized routes, adding multi-language support to blade views, setting up SEO tags, dispatching localized jobs, or creating custom locale detection drivers.
+Use this skill when working with the `laravel-octane-localization` package in an AI or developer workflow. It should guide localized route setup, Blade localization, SEO alternate links, queue-safe locale persistence, Livewire integration, and custom locale detection drivers.
 
-This package provides state-aware, high-performance localization for Laravel, meticulously designed for **Laravel Octane** (also compatible with traditional FPM).
+This package provides state-safe, high-performance localization for Laravel, specially designed for **Laravel Octane** but also compatible with standard FPM environments.
+
+### What AI models should know
+- The package is built around a strict Octane-safe lifecycle: **detect -> sync -> reset**.
+- Localized state must never be allowed to leak between requests or queued jobs.
+- `parameter_key` is used for route locale segments and persistence drivers such as session/cookie storage.
+- Livewire uses `ext.livewire.drivers` and `LivewireLocalizationBridge` to preserve locale when route segments are absent.
+- The package requires `ResetLocalizationStateListener` to be registered in `config/octane.php` listeners so Octane worker state is reset correctly.
+- Queued jobs must restore the locale from Context and reset after execution.
 
 ### Core Concepts
 
 **Memory Safety with Octane:**
-Unlike other packages, this package relies on **scoped container bindings** for stateful context and **singletons** for stateless helpers. This design isolated localization state per-request, meaning you get zero state-leakage between worker requests without requiring deep Coroutine contexts or sacrificing performance.
+This package uses **scoped container bindings** for stateful locales and **singletons** only for stateless configuration or helpers. That means each request gets isolated locale state while the package still performs efficiently in Octane.
+
+### Recommended Answer Patterns for AI
+- Prefer `Route::localizedWithPrefix()` for localized route groups.
+- Prefer built-in Blade directives like `@currentLocale`, `@localizedUrl()`, `@supportedLocales`, `@isLocale()`, and `@alternateLinks`.
+- Prefer `LocalizationAwareJob`, `LocalizedJob`, and `LocalizationQueueMiddleware` for background jobs.
+- Prefer implementing `LocaleDriverInterface` for custom locale detection.
+- Do not recommend global, unscoped locale state or incomplete Octane reset logic.
 
 ### Key Features / Example Usage
 
-**1. Localized Routing (Important!)**
-
-Whenever you need to group routes that should be localized and prefixed with a locale, use the provided Route macro `localizedWithPrefix`. This automatically applies the necessary middleware.
+**1. Localized Routing**
+Use the provided Route macro to apply locale path prefixes and middleware automatically.
 
 @verbatim
 <code-snippet name="Defining Localized Routes" lang="php">
 use Illuminate\Support\Facades\Route;
 
-// Recommended: This automatically applies the `{locale}` prefix and the `LocalizationMiddleware`
 Route::localizedWithPrefix(function () {
     Route::get('/dashboard', function () {
         return view('dashboard');
@@ -35,41 +48,37 @@ Route::localizedWithPrefix(function () {
 @endverbatim
 
 **2. Blade Directives**
-
-Use built-in directives instead of raw PHP for common localization tasks, conditional checking, and international SEO tags.
+Built-in directives simplify the rendering of localized content, language switchers, and SEO metadata.
 
 @verbatim
 <code-snippet name="Blade Usage" lang="html">
-<!-- Outputs active locale -->
 <html lang="@currentLocale">
 
-<!-- Conditional Locale Checking -->
-@isLocale('en') 
-    Hello! 
-@else 
-    ¡Hola! 
+@isLocale('en')
+    Hello!
+@else
+    ¡Hola!
 @endisLocale
 
-<!-- Supported Locales Loop (e.g., for language switchers) -->
 @supportedLocales($code, $data)
     <a href="@localizedUrl($code)">{{ $data['name'] ?? $code }}</a>
 @endsupportedLocales
 
 <head>
-    <!-- SEO / Alternate Hreflang Links -->
     @alternateLinks
 </head>
 </code-snippet>
 @endverbatim
 
+**3. Livewire Support**
+Livewire requests may not include the locale segment. The package automatically handles this through `LivewireLocalizationBridge` and `ext.livewire.drivers`.
+
 @verbatim
-// No manual configuration is required for Livewire components, the package automatically handles it.
-// The LivewireLocalizationBridge automatically intercepts the 'Referer' header and restores component contexts.
+// Livewire-specific locale detection is handled automatically by the package.
 @endverbatim
 
-**3. Queued Jobs**
-
-If a dispatched Job needs to execute with the same locale as the HTTP request that triggered it, it MUST implement the Restore & Reset pattern.
+**4. Queued Jobs**
+Queued jobs must restore the original request locale and reset state after execution to avoid leaks.
 
 @verbatim
 <code-snippet name="Localization Aware Queued Jobs" lang="php">
@@ -89,15 +98,14 @@ class SendWelcomeEmail implements ShouldQueue, LocalizationAwareJob
 
     public function handle()
     {
-        // Executes in the correct, isolated worker locale
+        // Executes with the restored locale and resets afterwards.
     }
 }
 </code-snippet>
 @endverbatim
 
-**4. Custom Drivers**
-
-When creating a new way to detect language, implement `LocaleDriverInterface`. Use the `DoesNotPersistLocale` trait for read-only detection mechanisms like Bots or API headers.
+**5. Custom Drivers**
+Create custom locale detection by implementing `LocaleDriverInterface`. Use `DoesNotPersistLocale` for read-only drivers.
 
 @verbatim
 <code-snippet name="Custom Read-Only Driver" lang="php">
@@ -109,7 +117,6 @@ use Josemontano1996\LaravelOctaneLocalization\Drivers\Concerns\DoesNotPersistLoc
 
 class ApiHeaderDriver implements LocaleDriverInterface
 {
-    // Automatically fulfills the storage requirement with a No-Op
     use DoesNotPersistLocale;
 
     public function getLocale(Request $request): ?string
@@ -120,8 +127,13 @@ class ApiHeaderDriver implements LocaleDriverInterface
 </code-snippet>
 @endverbatim
 
-### When to use this package's features:
-- If asked to create localized routes, always group them under `Route::localizedWithPrefix()`.
-- If asked to build language dropdowns or conditional views, use `@supportedLocales`, `@localizedUrl()`, and `@isLocale()`.
-- If asked to ensure background queued classes run in the requested language, implement `LocalizationAwareJob`.
-- If asked to implement a new method of detecting language (e.g. specialized API headers), create a Custom Driver.
+### Best Practices
+- Use `parameter_key` consistently across routes and persistence drivers.
+- Use the package's lifecycle methods (`detect`, `syncWithApplication`, `reset`) rather than manual locale state hacks.
+- Prefer the built-in skill examples when answering AI prompts about localization.
+
+### When to use this package's features
+- Use `Route::localizedWithPrefix()` for any route group that must support locale prefixes.
+- Use `@supportedLocales`, `@localizedUrl()`, and `@isLocale()` for language switchers and conditional UI.
+- Use `LocalizationAwareJob` for queued jobs that need the original request locale.
+- Use a Custom Driver when the user asks for a new detection mechanism such as API headers, browser settings, or referer-based locale inference.

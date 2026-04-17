@@ -1,30 +1,39 @@
 # System Architecture & Domain Logic
 
-When working on this codebase, you must understand how this package manages localization state specifically for **Laravel Octane**. Failure to understand the lifecycle will result in memory leaks or broken features.
+This package is built to prevent language state leakage in long-lived Laravel Octane workers but is also compatible with regular FPM. AI agents and developers must use the documented lifecycle and architecture exactly: detect the locale, sync it into the request-scoped environment, and reset the global state before the next request.
 
 ## 1. The Localization Lifecycle (Request Flow)
 When a request enters the application, the `LocalizationManager` coordinates the lifecycle:
-1. **Detect (`detect(Request)`):** Iterates through drivers defined in config to find a locale.
-2. **Sync (`syncWithApplication()`):** Modifies the global facade states: `App::setLocale`, `URL::defaults`, `Carbon`, etc. This state is strictly bound to the current worker request.
-3. **Flush (`reset()`):** The most critical step. Once the response is sent, the Manager absolutely must wipe the global application facades clean and clear the localized scoped bounds so the next user's Octane request receives a fresh, unaltered default state.
+1. **Detect (`detect(Request)`):** Iterates through configured drivers to resolve the locale.
+2. **Sync (`syncWithApplication()`):** Applies the locale to the current worker request by updating `App::setLocale`, `URL::defaults`, `Carbon`, and optionally `Number`.
+3. **Flush (`reset()`):** This is non-negotiable for Octane. After each request or queued job, the manager must clear localized state and restore the default locale so the next execution starts clean.
+
+> Important: In Octane, you must register `ResetLocalizationStateListener` in `config/octane.php` listeners so the reset logic runs for each worker request.
 
 ## 2. Container Strategy
-To prevent Octane leakages:
-- The **Data/State** objects (e.g., `LocalizationState` holding the active locale string, `LocalizationMiddleware`) are bound as **Scoped** (`$app->scoped()`). This means a new instance is created for every single HTTP request.
-- The **Actions/Services** (e.g., `LocalizationConfig`, `URLParser`, `SeoHelper`, `LocalizationManager`) are bound as **Singletons** (`$app->singleton()`) because they hold zero request-specific data. They only read from config or accept parameters.
+The package uses container bindings to isolate state safely:
+- **Scoped** bindings are used for stateful request data such as `LocalizationState`, `LocalizationMiddleware`, and driver instances that may hold per-request state.
+- **Singleton** bindings are used for stateless services like `LocalizationConfig`, `URLParser`, `SeoHelper`, and `LocalizationManager`, since they do not retain locale data between calls.
 
 ## 3. The Livewire Bridge
-Livewire breaks traditional URL drivers because it hits a generic, non-localized endpoint (`/livewire/update`).
-- We do not require livewire as a composer dependency.
-- The `LivewireLocalizationBridge` intercepts these requests and dynamically swaps the `drivers` array out for the fallback `ext.livewire.drivers` stack defined in the config. 
-- Usually, this stack utilizes the `RefererDriver` to pull the locale from the `Referer` header of the page the Livewire component is mounted on.
+Livewire requests do not always include a localized route segment, so the package provides a special fallback path:
+- The `LivewireLocalizationBridge` rewrites Livewire requests to use the `ext.livewire.drivers` driver stack.
+- This typically uses `RefererDriver` to infer the locale from the page that mounted the Livewire component.
+- Do not assume Livewire routes are already localized by URL; the fallback driver stack is critical.
 
 ## 4. Driver Architecture
-- Drivers (`LocaleDriverInterface`) are responsible for reading `getLocale()` and persisting `storeLocale()`.
-- Some drivers only read data (like URL segments or API Headers) and have no business "saving" data back to sessions or databases. For these read-only mechanisms, they use the `DoesNotPersistLocale` trait, which fulfills the persistence contract with a blank No-Op.
+- Drivers implement `LocaleDriverInterface`, providing `getLocale()` and `storeLocale()`.
+- Read-only drivers should use `DoesNotPersistLocale` to satisfy the interface without persisting state.
+- Persistent drivers (`SessionDriver`, `CookieDriver`, etc.) should use the same `parameter_key` to save and retrieve the locale consistently.
 
 ## 5. Queue Job Architecture
-When a localized job is pushed to the queue, the worker executing the job has no idea what the language was.
-- We use the Laravel 11 Context feature to transport the locale string seamlessly inside the queued payload.
-- The `LocalizationQueueMiddleware` intercepts the job *execution* on the worker.
-- It operates a **Restore & Reset** pattern: It injects the context locale into the system (`restoreLocalization`), runs the user's code, and then immediately runs `resetLocalization` using a `try/finally` block to ensure the next job in the queue's worker gets a clean slate.
+Queued jobs are executed in the same worker process as previous jobs, so they require explicit locale restoration and cleanup:
+- The locale is transported into the queued payload via Laravel 11 `Context`.
+- `LocalizationQueueMiddleware` restores the locale before `handle()` runs.
+- It always calls `resetLocalization()` in a `finally` block so worker state is returned to the default locale after job execution.
+
+## AI / Boost Model Guidance
+- Always treat this package as Octane-safe: do not recommend simple global locale storage without reset.
+- Prefer the package's route macros, middleware, job middleware, and configuration values.
+- If asked about Livewire localization, reference `LivewireLocalizationBridge` and `ext.livewire.drivers`.
+- If asked about job localization, reference `LocalizationAwareJob`, `LocalizedJob`, `LocalizationQueueMiddleware`, and the restore/reset pattern.
