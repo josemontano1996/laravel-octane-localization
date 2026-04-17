@@ -15,8 +15,9 @@ class RegisterMacros
         Route::macro('localizedWithPrefix', function ($callback = null) {
             $config = app(LocalizationConfigInterface::class);
             $key = $config->getParameterKey();
+            $supportedLocales = $config->getSupportedLocaleCodes();
 
-            return Route::prefix('{'.$key.'}')
+            return Route::prefix("{$key}")->whereIn($key, $supportedLocales)
                 ->middleware(LocalizationMiddleware::class)
                 ->group($callback);
         });

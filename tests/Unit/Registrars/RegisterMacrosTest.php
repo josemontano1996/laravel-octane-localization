@@ -12,6 +12,10 @@ use Mockery;
 
 beforeEach(function () {
     RegisterMacros::register();
+    
+    // Setup a fresh mock for every test to avoid expectation pollution
+    $this->config = Mockery::mock(LocalizationConfigInterface::class);
+    $this->app->instance(LocalizationConfigInterface::class, $this->config);
 });
 
 test('it registers localizedWithPrefix macro', function () {
@@ -19,18 +23,36 @@ test('it registers localizedWithPrefix macro', function () {
 });
 
 test('localizedWithPrefix macro creates a prefixed group with middleware', function () {
-    $config = Mockery::mock(LocalizationConfigInterface::class);
-    $config->shouldReceive('getParameterKey')->andReturn('lang');
-    $this->app->instance(LocalizationConfigInterface::class, $config);
+    $this->config->shouldReceive('getParameterKey')->andReturn('lang');
+    $this->config->shouldReceive('getSupportedLocaleCodes')->andReturn(['en', 'es']);
 
     Route::localizedWithPrefix(function () {
-        Route::get('/test-macro', fn () => 'test')->name('test.macro');
+        Route::get('/test-basic', fn () => 'test')->name('test.basic');
     });
 
-    // Fresh look at the routes
-    $route = collect(Route::getRoutes())->first(fn ($r) => $r->getName() === 'test.macro');
+    $route = collect(Route::getRoutes())->first(fn ($r) => $r->getName() === 'test.basic');
 
     expect($route)->not->toBeNull()
-        ->and($route->getPrefix())->toContain('{lang}')
+        ->and($route->getPrefix())->toBe('{lang}') // Assert exact match
         ->and($route->gatherMiddleware())->toContain(LocalizationMiddleware::class);
+});
+
+test('localizedWithPrefix macro applies whereIn constraint to the prefix', function () {
+    $this->config->shouldReceive('getParameterKey')->andReturn('locale');
+    $this->config->shouldReceive('getSupportedLocaleCodes')->andReturn(['en', 'es', 'fr']);
+
+    Route::localizedWithPrefix(function () {
+        Route::get('/test-constraint', fn () => 'test')->name('test.constraint');
+    });
+
+    $route = collect(Route::getRoutes())->first(fn ($r) => $r->getName() === 'test.constraint');
+
+    expect($route)->not->toBeNull();
+    
+    // In Laravel, the whereIn constraint is compiled into a regex pattern
+    // Access the 'wheres' property directly on the Route object
+    $wheres = $route->wheres; 
+
+    expect($wheres)->toHaveKey('locale')
+        ->and($wheres['locale'])->toBe('en|es|fr');
 });
