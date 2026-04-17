@@ -81,10 +81,11 @@ final readonly class LocalizationManager implements LocalizationManagerInterface
         if (class_exists(Number::class)) {
             Number::useLocale($locale);
         }
-    }
-    
-    public function reset(): void
-    {
+        }
+        
+        public function reset(): void
+        {
+        $this->state->reset();
         $defaultLocale = $this->config->getDefaultLocale();
 
         if (class_exists(Number::class)) {
@@ -98,6 +99,7 @@ final readonly class LocalizationManager implements LocalizationManagerInterface
         URL::defaults([$this->config->getParameterKey() => $defaultLocale]);
 
         App::setLocale($defaultLocale);
+        
     }
 
     private function resolveDriver(string $class): LocaleDriverInterface

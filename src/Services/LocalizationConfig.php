@@ -10,7 +10,7 @@ use Josemontano1996\LaravelOctaneLocalization\Exceptions\InvalidConfiguration;
 
 final class LocalizationConfig implements LocalizationConfigInterface
 {
-    public const string DEFAULT_LOCALE_CONFIG_KEY = 'app.locale';
+    public const string DEFAULT_LOCALE_CONFIG_KEY = 'octane-localization.default_locale';
 
     public const string FALLBACK_LOCALE_CONFIG_KEY = 'app.fallback_locale';
 

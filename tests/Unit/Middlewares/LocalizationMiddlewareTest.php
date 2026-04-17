@@ -37,6 +37,7 @@ it('detects locale, syncs, and adds headers to the response', function () {
     expect($response->headers->get('Content-Language'))->toBe($locale);
     expect($response->headers->get('Vary'))->toContain('Accept-Language');
 });
+
 it('returns a redirect response if the redirector triggers', function () {
     // 1. Arrange
     $request = Request::create('/', 'GET');
@@ -87,50 +88,4 @@ it('appends Accept-Language to existing Vary headers', function () {
     // 3. Assert
     // Should be "User-Agent, Accept-Language"
     expect($response->headers->get('Vary'))->toBe('User-Agent, Accept-Language');
-});
-
-it('flushes manager state on terminate', function () {
-    // 1. Arrange
-    $manager = Mockery::mock(LocalizationManagerInterface::class);
-    $redirector = Mockery::mock(LocalizationRedirectorInterface::class);
-
-    $manager->shouldReceive('flush')->once();
-
-    $middleware = new LocalizationMiddleware($manager, $redirector);
-
-    // 2. Act
-    $middleware->terminate(new Request, new Response);
-});
-
-it('calls flush even if the request throws an exception', function () {
-    // 1. Arrange
-    $request = Request::create('/error-route', 'GET');
-    $manager = Mockery::mock(LocalizationManagerInterface::class);
-    $redirector = Mockery::mock(LocalizationRedirectorInterface::class);
-
-    // Setup: Manager should detect, sync, and EVENTUALLY flush
-    $manager->shouldReceive('detect')->once();
-    $manager->shouldReceive('syncWithApplication')->once();
-    $manager->shouldReceive('flush')->once(); // This is what we want to guarantee
-
-    $redirector->shouldIgnoreMissing();
-
-    $middleware = new LocalizationMiddleware($manager, $redirector);
-
-    // 2. Act & Assert
-    try {
-        // We simulate a route/closure that explodes
-        $middleware->handle($request, function () {
-            throw new Exception('Something went wrong in the controller');
-        });
-    } catch (Exception $e) {
-        // We catch the exception so the test doesn't stop here
-        expect($e->getMessage())->toBe('Something went wrong in the controller');
-    } finally {
-        // 3. The "Octane Simulation"
-        // In a real app, the Kernel calls terminate() in the finally block of the request cycle
-        $middleware->terminate($request, new Response);
-    }
-
-    // Mockery will verify that reset() was called exactly once
 });

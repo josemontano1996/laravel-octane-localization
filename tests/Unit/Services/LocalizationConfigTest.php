@@ -50,7 +50,7 @@ test('it can get extension drivers for a specific extension', function () {
 });
 
 test('it can get default locale', function () {
-    Config::set('app.locale', 'fr');
+    Config::set('octane-localization.default_locale', 'fr');
 
     expect($this->config->getDefaultLocale())->toBe('fr');
 });

@@ -9,6 +9,7 @@ use Josemontano1996\LaravelOctaneLocalization\Drivers\UrlDriver;
 use App\DTOs\DataHolder;
 
 return [
+    'default_locale' => DataHolder::DEFAULT_LOCALE,
 
     'parameter_key' => DataHolder::PARAMETER_KEY,
 

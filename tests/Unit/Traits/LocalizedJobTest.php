@@ -41,7 +41,7 @@ test('it does nothing when no locale exists in context', function () {
 });
 
 test('it resets localization', function () {
-    $this->manager->shouldReceive('flush')->once();
+    $this->manager->shouldReceive('reset')->once();
 
     $this->job->resetLocalization();
 });

@@ -59,10 +59,11 @@ Publish the config file:
 php artisan vendor:publish --tag="octane-localization"
 ```
 
-The `config/octane-localization.php` file allows you to define your supported locales and the order of drivers used for detection.
+The `config/octane-localization.php` file allows you to define your default locale, supported locales, and the order of drivers used for detection.
 
 ```php
 return [
+    'default_locale' => 'en',
     'parameter_key' => 'locale',
     'supported_locales' => ['en', 'es', 'fr'],
     
@@ -73,6 +74,8 @@ return [
     ],
 ];
 ```
+
+- `default_locale` - the locale used when no supported locale is detected and the locale restored by Octane/queue resets.
 
 ## Usage
 

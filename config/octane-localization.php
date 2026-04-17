@@ -8,6 +8,16 @@ use Josemontano1996\LaravelOctaneLocalization\Drivers\SessionDriver;
 use Josemontano1996\LaravelOctaneLocalization\Drivers\UrlDriver;
 
 return [
+        /*
+    |--------------------------------------------------------------------------
+    | Default Locale
+    |--------------------------------------------------------------------------
+    |
+    | The locale that will be used when no supported locale is detected,
+    | and the locale restored by the package when resetting Octane/queue state.
+    |
+    */
+    'default_locale' => 'en',
 
     'parameter_key' => 'locale',
 

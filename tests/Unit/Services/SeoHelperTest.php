@@ -18,7 +18,7 @@ beforeEach(function () {
 
     // Ensure state for the test
     Config::set('octane-localization.supported_locales', ['en', 'es', 'fr']);
-    Config::set('app.locale', 'en');
+    Config::set('octane-localization.default_locale', 'en');
 });
 
 test('it generates alternate links for all supported locales using real services', function () {

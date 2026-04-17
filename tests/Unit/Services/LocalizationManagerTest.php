@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\URL;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocaleDriverInterface;
+use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationConfigInterface;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationConfig;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationContext;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationManager;
@@ -20,7 +21,7 @@ beforeEach(function () {
     $this->manager = new LocalizationManager($this->config, $this->state, $this->context);
 
     Config::set('octane-localization.supported_locales', ['en', 'es', 'fr']);
-    Config::set('app.locale', 'en');
+    Config::set('octane-localization.default_locale', 'en');
     Config::set('octane-localization.parameter_key', 'locale');
 });
 
@@ -87,22 +88,23 @@ test('it syncs with application state', function () {
 });
 
 test('it can flush application state', function () {
-    $originalLocale = 'en';
-    Config::set('app.locale', $originalLocale);
+    $config = app(LocalizationConfigInterface::class);
+    $original = $config->getDefaultLocale();
+    $mutated = $config->getDefaultFallbackLocale();
+    $this->state->set($mutated);
 
-    $this->state->set('es');
     $this->manager->syncWithApplication();
 
-    expect(App::getLocale())->toBe('es');
+    expect(App::getLocale())->toBe($mutated);
 
     $this->manager->reset();
 
     expect($this->state->get())->toBeNull();
 
-    expect(App::getLocale())->toBe('es');
+    expect(App::getLocale())->toBe($original);
 
-    $defaults = URL::getDefaultParameters();
-    expect($defaults['locale'])->toBeNull();
+    $defaults = URL::getDefaultParameters()[$config->getParameterKey()];
+    expect($defaults)->toBe($original);
 
-    expect(Carbon::getLocale())->toBe('es');
+    expect(Carbon::getLocale())->toBe($original);
 });
