@@ -17,7 +17,7 @@ class RegisterMacros
             $key = $config->getParameterKey();
             $supportedLocales = $config->getSupportedLocaleCodes();
 
-            return Route::prefix("{$key}")->whereIn($key, $supportedLocales)
+            return Route::prefix('{'.$key.'}')->whereIn($key, $supportedLocales)
                 ->middleware(LocalizationMiddleware::class)
                 ->group($callback);
         });
