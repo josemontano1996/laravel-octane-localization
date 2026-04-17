@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DTOS;
+namespace App\DTOs;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\App;

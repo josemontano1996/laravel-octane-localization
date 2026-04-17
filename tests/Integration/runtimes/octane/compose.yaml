@@ -29,7 +29,7 @@ services:
 
         volumes:
             - "../../../../:/var/www"
-        working_dir: /var/www/tests/Integration/runtimes/context
+        working_dir: /var/www
         networks:
             - sail
         depends_on: {}

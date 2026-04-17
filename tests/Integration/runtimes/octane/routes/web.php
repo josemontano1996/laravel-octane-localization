@@ -1,6 +1,6 @@
 <?php
 
-use App\DTOS\BleedTestData;
+use App\DTOs\BleedTestData;
 use Illuminate\Support\Facades\Route;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationConfigInterface;
 
