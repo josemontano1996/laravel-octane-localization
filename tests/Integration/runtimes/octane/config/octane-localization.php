@@ -6,10 +6,11 @@ use Josemontano1996\LaravelOctaneLocalization\Drivers\RefererDriver;
 use Josemontano1996\LaravelOctaneLocalization\Drivers\RequestPreferredLocaleDriver;
 use Josemontano1996\LaravelOctaneLocalization\Drivers\SessionDriver;
 use Josemontano1996\LaravelOctaneLocalization\Drivers\UrlDriver;
+use App\DTOs\DataHolder;
 
 return [
 
-    'parameter_key' => 'locale',
+    'parameter_key' => DataHolder::PARAMETER_KEY,
 
     /*
     |--------------------------------------------------------------------------
@@ -19,7 +20,7 @@ return [
     | The list of locales that your application supports.
     |
     */
-    'supported_locales' => ['en', 'es', 'fr'],
+    'supported_locales' => DataHolder::SUPPORTED_LOCALES,
 
     /*
     |--------------------------------------------------------------------------
@@ -34,7 +35,7 @@ return [
     'drivers' => [
         UrlDriver::class,
         SessionDriver::class,
-        // Josemontano1996\LaravelOctaneLocalization\Drivers\CookieDriver::class,
+            // Josemontano1996\LaravelOctaneLocalization\Drivers\CookieDriver::class,
         RequestPreferredLocaleDriver::class,
     ],
 
@@ -58,8 +59,9 @@ return [
             'drivers' => [
                 RefererDriver::class,
                 SessionDriver::class,
-                // Josemontano1996\LaravelOctaneLocalization\Drivers\CookieDriver::class,
+                    // Josemontano1996\LaravelOctaneLocalization\Drivers\CookieDriver::class,
                 RequestPreferredLocaleDriver::class,
-            ]],
+            ]
+        ],
     ],
 ];

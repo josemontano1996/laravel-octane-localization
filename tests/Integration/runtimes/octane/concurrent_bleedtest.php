@@ -1,14 +1,18 @@
 #!/usr/bin/env php
 <?php
 
+require __DIR__ . '/vendor/autoload.php';
+
+use App\DTOs\DataHolder;
+
 // Usage: php concurrent_bleedtest.php [-t <total>] [-c <concurrency>]
 // Requires: ext-curl, ext-json
 
-$locales = ['en', 'es', 'fr', 'cz', 'de'];
+$locales = DataHolder::SUPPORTED_LOCALES;
 
 $options = getopt('t:c:', ['total:', 'concurrency:']);
 $total_requests = (int) ($options['t'] ?? $options['total'] ?? 100);
-$concurrency    = (int) ($options['c'] ?? $options['concurrency'] ?? 50);
+$concurrency = (int) ($options['c'] ?? $options['concurrency'] ?? 50);
 
 $delay_ms = 100;          // Delay between firing each request (ms)
 $sleep_ms = $delay_ms * 3; // Query-string hint so the route can sleep and force overlap
@@ -19,10 +23,10 @@ $base_url = getenv('OCTANE_URL') ?: 'http://localhost:8000';
 
 // The default app locale — must match what config('app.locale') returns.
 // Pass via env: DEFAULT_LOCALE=en php concurrent_bleedtest.php
-$default_locale = getenv('DEFAULT_LOCALE') ?: 'en';
+$default_locale = DataHolder::DEFAULT_LOCALE;
 
 // Routes
-$localized_endpoint   = $base_url . '/%s/localized';  // /{locale}/localized
+$localized_endpoint = $base_url . '/%s/localized';  // /{locale}/localized
 $unlocalized_endpoint = $base_url . '/unlocalized';    // /unlocalized
 
 // -------------------------------------------------------------------------
@@ -32,7 +36,7 @@ $unlocalized_endpoint = $base_url . '/unlocalized';    // /unlocalized
 function make_localized_handle(string $locale, int $sleep_ms, string $endpoint): \CurlHandle
 {
     $url = sprintf($endpoint, $locale) . '?sleep=' . $sleep_ms . '&expected=' . urlencode($locale);
-    $ch  = curl_init($url);
+    $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_TIMEOUT, 10);
     return $ch;
@@ -42,7 +46,7 @@ function make_unlocalized_handle(string $default_locale, int $sleep_ms, string $
 {
     // Pass the default locale as expected so the server can call findMismatches()
     $url = $endpoint . '?sleep=' . $sleep_ms . '&expected=' . urlencode($default_locale);
-    $ch  = curl_init($url);
+    $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_TIMEOUT, 10);
     return $ch;
@@ -61,8 +65,8 @@ echo "Delay / server sleep: {$delay_ms}ms / {$sleep_ms}ms\n";
 echo "Total: $total_requests  |  Concurrency: $concurrency\n";
 echo "--------------------------------------------------\n";
 
-$multi     = curl_multi_init();
-$results   = [];
+$multi = curl_multi_init();
+$results = [];
 $in_flight = [];
 
 // Build interleaved request list.
@@ -105,19 +109,22 @@ while (count($pending) > 0 || count($in_flight) > 0) {
 
     // Harvest completed handles
     while ($info = curl_multi_info_read($multi)) {
-        $ch  = $info['handle'];
+        $ch = $info['handle'];
         $key = (int) $ch;
 
-        $item      = $in_flight[$key];
-        $raw       = curl_multi_getcontent($ch);
+        if (!isset($in_flight[$key])) {
+            continue;
+        }
+
+        $item = $in_flight[$key];
+        $raw = curl_multi_getcontent($ch);
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $curl_err  = curl_error($ch);
-        $data      = json_decode($raw, true);
+        $curl_err = curl_error($ch);
+        $data = json_decode($raw, true);
 
         $results[] = $item + compact('data', 'raw', 'http_code', 'curl_err');
 
         curl_multi_remove_handle($multi, $ch);
-        curl_close($ch);
         unset($in_flight[$key]);
     }
 
@@ -133,17 +140,17 @@ $duration = round(microtime(true) - $start_time, 2);
 // Analysis
 // -------------------------------------------------------------------------
 
-$localized_bleeds   = 0;
+$localized_bleeds = 0;
 $unlocalized_bleeds = 0;
-$errors             = 0;
+$errors = 0;
 
 foreach ($results as $i => $result) {
-    $type      = $result['type'];
-    $locale    = $result['locale'];
-    $data      = $result['data'];
+    $type = $result['type'];
+    $locale = $result['locale'];
+    $data = $result['data'];
     $http_code = $result['http_code'];
-    $curl_err  = $result['curl_err'];
-    $label     = $type === 'unlocalized' ? 'unlocalized' : $locale;
+    $curl_err = $result['curl_err'];
+    $label = $type === 'unlocalized' ? 'unlocalized' : $locale;
 
     // Both routes return: { bleeded: bool, mismatches: array|null }
     $is_valid = is_array($data) && array_key_exists('bleeded', $data);

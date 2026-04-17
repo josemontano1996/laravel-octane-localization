@@ -4,9 +4,9 @@ set -e
 # Ensure we are in the script's directory
 cd "$(dirname "$0")"
 
+# 1. Prepare environment
 composer update --no-scripts --no-interaction
 
-# Ensure .env exists
 if [ ! -f ".env" ]; then
     echo "Creating .env from .env.example"
     cp .env.example .env
@@ -20,34 +20,43 @@ if [ ! -f database/database.sqlite ]; then
 fi
 chmod 0666 database/database.sqlite || true
 
-./vendor/bin/sail down
+# 2. Define cleanup function
+cleanup() {
+    echo "--------------------------------------------------"
+    echo "Cleaning up..."
+    ./vendor/bin/sail down || true
+    rm -f .env
+}
+trap cleanup EXIT
+
+# 3. Start Sail
 ./vendor/bin/sail build && ./vendor/bin/sail up -d
 
-OCTANE_URL="${OCTANE_URL:-http://localhost:80/unlocalized}"
-echo "Waiting for Octane to be ready at $OCTANE_URL ..."
+# 4. Wait for Octane
+# OCTANE_URL should be the base URL for the test script.
+# We'll default to localhost:80 because that's what's in compose.yaml
+export OCTANE_URL="${OCTANE_URL:-http://localhost:80}"
+HEALTH_CHECK_URL="$OCTANE_URL/unlocalized"
+
+echo "Waiting for Octane to be ready at $HEALTH_CHECK_URL ..."
 timeout=60
 current_wait=0
-until curl -sf -o /dev/null "$OCTANE_URL" || [ $current_wait -ge $timeout ]; do
+until curl -sf -o /dev/null "$HEALTH_CHECK_URL" || [ $current_wait -ge $timeout ]; do
     sleep 2
     current_wait=$((current_wait + 2))
 done
 
 if [ $current_wait -ge $timeout ]; then
     echo "ERROR: Octane did not become ready within ${timeout}s"
-    ./vendor/bin/sail down
     exit 1
 fi
 
 echo "Octane is ready."
 
 # 5. Run concurrency bleed test
-TOTAL=${1:-20}
+TOTAL=${1:-100}
 CONCURRENCY=${2:-3}
 php concurrent_bleedtest.php -t "$TOTAL" -c "$CONCURRENCY"
 TEST_EXIT=$?
-
-# 6. Cleanup
-rm -f .env
-./vendor/bin/sail down
 
 exit $TEST_EXIT
