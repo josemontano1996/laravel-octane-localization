@@ -24,14 +24,11 @@ final class BleedTestData
      */
     public static function capture(LocalizationConfigInterface $config): self
     {
-        $numberReflection = new \ReflectionClass(Number::class);
-        $numberLocale = $numberReflection->getProperty('locale')->getValue();
-
         return new self(
             app: App::getLocale(),
-            urlDefault: URL::getDefaultParameters()[$config->getParameterKey()],
+            urlDefault: URL::getDefaultParameters()[$config->getParameterKey()] ?? null,
             carbon: Carbon::getLocale(),
-            number: $numberLocale,
+            number: Number::defaultLocale(),
         );
     }
 
