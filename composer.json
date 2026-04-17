@@ -2,10 +2,21 @@
     "name": "josemontano1996/laravel-octane-localization",
     "type": "library",
     "license": "MIT",
+    "description": "A comprehensive, runtime-safe localization suite for Laravel 12+, with first-class support for Octane, Livewwire and localized Jobs.",
+    "homepage": "https://github.com/josemontano1996/laravel-octane-localization",
+    "keywords": [
+        "laravel",
+        "localization",
+        "i18n",
+        "octane",
+        "state-isolation"
+    ],
     "authors": [
         {
             "name": "Jose Manuel Montano Mengual",
-            "email": "jm3develop@gmail.com"
+            "email": "jm3develop@gmail.com",
+            "homepage": "https://www.linkedin.com/in/josemanuelmontanomengual/",
+            "role": "Creator"
         }
     ],
     "require": {
