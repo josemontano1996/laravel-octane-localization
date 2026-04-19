@@ -1,10 +1,13 @@
 <?php
 
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationConfigInterface;
+use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationContextInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationManagerInterface;
+use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationRedirectorInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationStateInterface;
-use Josemontano1996\LaravelOctaneLocalization\Middlewares\LivewireLocalizationBridge;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\SeoHelperInterface;
+use Josemontano1996\LaravelOctaneLocalization\Contracts\URLParserInterface;
+use Josemontano1996\LaravelOctaneLocalization\Middlewares\LivewireLocalizationBridge;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationConfig;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationManager;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationState;
@@ -40,6 +43,46 @@ it('registers the config as a singleton', function () {
     // Even after clearing instances, singletons usually persist in tests
     // depending on how you refresh the app, but we can check the binding type:
     expect(app()->isShared(LocalizationConfigInterface::class))->toBeTrue();
+});
+
+it('registers manager, redirector, context, and seo helper as scoped services', function () {
+    $scopedInterfaces = [
+        LocalizationManagerInterface::class,
+        LocalizationRedirectorInterface::class,
+        LocalizationContextInterface::class,
+        SeoHelperInterface::class,
+    ];
+
+    foreach ($scopedInterfaces as $interface) {
+        $instance1 = app($interface);
+
+        // Within the same scope, the same instance is returned
+        expect($instance1)->toBe(app($interface), "Expected {$interface} to return the same instance within scope");
+
+        // Simulate an Octane request boundary by clearing the scoped instance
+        app()->forgetInstance($interface);
+
+        // After reset, a fresh instance must be returned
+        $instance2 = app($interface);
+
+        expect($instance1)
+            ->not->toBe($instance2, "Expected {$interface} to return a new instance after scope reset");
+    }
+});
+
+it('registers config and url parser as true singletons', function () {
+    $singletonInterfaces = [
+        LocalizationConfigInterface::class,
+        URLParserInterface::class,
+    ];
+
+    foreach ($singletonInterfaces as $interface) {
+        $instance1 = app($interface);
+        $instance2 = app($interface);
+
+        // Singletons always return the exact same instance
+        expect($instance1)->toBe($instance2, "Expected {$interface} to be a singleton");
+    }
 });
 
 it('prepends the livewire bridge middleware to the web group', function () {
