@@ -11,6 +11,7 @@ use Josemontano1996\LaravelOctaneLocalization\Middlewares\LivewireLocalizationBr
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationConfig;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationManager;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationState;
+use Josemontano1996\LaravelOctaneLocalization\Providers\LocalizationServiceProvider;
 use Josemontano1996\LaravelOctaneLocalization\Services\SeoHelper;
 
 it('binds interfaces to implementations', function () {
@@ -102,4 +103,16 @@ it('merges the package configuration', function () {
 
     expect($config)->toBeArray()
         ->and($config['parameter_key'])->toBe('locale');
+});
+
+it('calls reset on the locale manager during boot', function () {
+    // Swap the real manager for a mock so we can assert reset() is called
+    $manager = Mockery::mock(LocalizationManagerInterface::class);
+    $manager->shouldReceive('reset')->once();
+
+    app()->instance(LocalizationManagerInterface::class, $manager);
+
+    // Boot a fresh provider instance — this simulates an Octane worker restart
+    $provider = new LocalizationServiceProvider(app());
+    $provider->boot();
 });

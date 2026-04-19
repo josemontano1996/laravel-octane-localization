@@ -11,6 +11,11 @@ beforeEach(function () {
     RegisterBladeDirectives::register();
 });
 
+test('it registers @t translation shorthand directive', function () {
+    $compiled = Blade::compileString("@t('auth.login')");
+    expect($compiled)->toBe("<?php echo __('auth.login'); ?>");
+});
+
 test('it registers @currentLocale directive', function () {
     $compiled = Blade::compileString('@currentLocale');
     expect($compiled)->toBe('<?php echo app()->getLocale(); ?>');
