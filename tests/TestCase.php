@@ -37,13 +37,13 @@ class TestCase extends Orchestra
         $app['router']->middlewareGroup('web', []);
         // 1. Basic Laravel Setup
         $app['config']->set('database.default', 'testing');
-        $app['config']->set('octane-localization.default_locale', self::DEFAULT_LOCALE);
         $app['config']->set('app.locale', self::DEFAULT_LOCALE);
         $app['config']->set('app.fallback_locale', self::FALLBACK_LOCALE);
 
         // 2. Package-specific Configuration
         // We use the same 'octane-localization' key defined in your ServiceProvider
         $app['config']->set('octane-localization', [
+            'default_locale' => self::DEFAULT_LOCALE,
             'parameter_key' => self::PARAMETER_KEY,
             'supported_locales' => self::SUPPORTED_LOCALES,
             'cookie_ttl' => 1440,
