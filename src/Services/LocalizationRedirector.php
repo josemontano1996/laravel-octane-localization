@@ -17,17 +17,18 @@ final readonly class LocalizationRedirector implements LocalizationRedirectorInt
         private LocalizationConfigInterface $config,
         private LocalizationStateInterface $state,
         private URLParserInterface $urlParser,
-    ) {}
+    ) {
+    }
 
     public function shouldRedirect(Request $request): bool
     {
         // 1. Only redirect GET requests
-        if (! $request->isMethod('GET')) {
+        if (!$request->isMethod('GET')) {
             return false;
         }
 
         // 2. Is redirection globally active?
-        if (! $this->config->isRedirectionEnabled()) {
+        if (!$this->config->isRedirectionEnabled()) {
             return false;
         }
 
@@ -41,18 +42,20 @@ final readonly class LocalizationRedirector implements LocalizationRedirectorInt
             return false;
         }
 
-        $urlLocale = $this->urlParser->getLocaleFromRequest($request);
         $detectedLocale = $this->state->get();
+
+        $urlLocale = $this->urlParser->getLocaleFromRequest($request);
 
         return $urlLocale !== $detectedLocale;
     }
 
     public function getRedirectResponse(Request $request): RedirectResponse
     {
+        $locale = $this->state->get();
 
         $localizedUrl = $this->urlParser->getLocalizedUrl(
             $request->fullUrl(),
-            $this->state->get()
+            $locale
         );
 
         return new RedirectResponse($localizedUrl, 302, [

@@ -31,7 +31,7 @@ use Override;
 
 class LocalizationServiceProvider extends ServiceProvider
 {
-    public const string  CONFIG_PATH = __DIR__.'/../../config/octane-localization.php';
+    public const string CONFIG_PATH = __DIR__ . '/../../config/octane-localization.php';
 
     public const string CONFIG_KEY = 'octane-localization';
 
@@ -43,10 +43,12 @@ class LocalizationServiceProvider extends ServiceProvider
         // 1. Core Services (Singletons)
         $this->app->singleton(LocalizationConfigInterface::class, LocalizationConfig::class);
         $this->app->singleton(URLParserInterface::class, URLParser::class);
-        $this->app->singleton(LocalizationRedirectorInterface::class, LocalizationRedirector::class);
-        $this->app->singleton(LocalizationManagerInterface::class, LocalizationManager::class);
-        $this->app->singleton(LocalizationContextInterface::class, LocalizationContext::class);
-        $this->app->singleton(SeoHelperInterface::class, SeoHelper::class);
+
+
+        $this->app->scoped(SeoHelperInterface::class, SeoHelper::class);
+        $this->app->scoped(LocalizationRedirectorInterface::class, LocalizationRedirector::class);
+        $this->app->scoped(LocalizationManagerInterface::class, LocalizationManager::class);
+        $this->app->scoped(LocalizationContextInterface::class, LocalizationContext::class);
 
         // 2. Data/State (Scoped - Fresh for every request)
         $this->app->scoped(LocalizationStateInterface::class, LocalizationState::class);
@@ -69,7 +71,7 @@ class LocalizationServiceProvider extends ServiceProvider
         foreach ($allUsedDrivers as $driverClass) {
             // Special binding for CookieDriver
             if ($driverClass === CookieDriver::class) {
-                $this->app->scoped($driverClass, fn () => new CookieDriver(
+                $this->app->scoped($driverClass, fn() => new CookieDriver(
                     $config
                 ));
 
@@ -85,7 +87,7 @@ class LocalizationServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                self::CONFIG_PATH => config_path(self::CONFIG_KEY.'.php'),
+                self::CONFIG_PATH => config_path(self::CONFIG_KEY . '.php'),
             ], self::CONFIG_KEY);
         }
         // Lazy resolution

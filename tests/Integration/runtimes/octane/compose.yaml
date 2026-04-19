@@ -26,7 +26,7 @@ services:
             QUEUE_CONNECTION: sync
             DB_CONNECTION: sqlite
             DB_DATABASE: ":memory:"
-            SUPERVISOR_PHP_COMMAND: "bash -c \"php artisan key:generate --force && php artisan migrate --force && php artisan octane:install --server=frankenphp --no-interaction && php artisan octane:start --server=frankenphp --host=0.0.0.0 --admin-port=2019 --port=80\""
+            SUPERVISOR_PHP_COMMAND: "bash -c \"php artisan key:generate --force && php artisan optimize:clear && php artisan migrate --force && php artisan octane:install --server=frankenphp --no-interaction && php artisan octane:start --server=frankenphp --host=0.0.0.0 --admin-port=2019 --port=80\""
             XDG_CONFIG_HOME:  /var/www/tests/Integration/runtimes/octane/config
             XDG_DATA_HOME:  /var/www/tests/Integration/runtimes/octane/data
 

@@ -22,13 +22,14 @@ final readonly class LocalizationManager implements LocalizationManagerInterface
         private LocalizationConfigInterface $config,
         private LocalizationStateInterface $state,
         private LocalizationContextInterface $context
-    ) {}
+    ) {
+    }
 
     public function setLocale(string $locale): void
     {
         $target = $this->config->isSupportedLocale($locale)
-         ? $locale
-         : $this->config->getDefaultLocale();
+            ? $locale
+            : $this->config->getDefaultLocale();
 
         $this->state->set($target);
     }
@@ -81,11 +82,11 @@ final readonly class LocalizationManager implements LocalizationManagerInterface
         if (class_exists(Number::class)) {
             Number::useLocale($locale);
         }
-        }
-        
-        public function reset(): void
-        {
-        $this->state->reset();
+    }
+
+    public function reset(): void
+    {
+
         $defaultLocale = $this->config->getDefaultLocale();
 
         if (class_exists(Number::class)) {
@@ -99,18 +100,18 @@ final readonly class LocalizationManager implements LocalizationManagerInterface
         URL::defaults([$this->config->getParameterKey() => $defaultLocale]);
 
         App::setLocale($defaultLocale);
-        
+
     }
 
     private function resolveDriver(string $class): LocaleDriverInterface
     {
-        if (! class_exists($class)) {
+        if (!class_exists($class)) {
             throw DriverException::notFound($class);
         }
 
         $driver = app($class);
 
-        if (! $driver instanceof LocaleDriverInterface) {
+        if (!$driver instanceof LocaleDriverInterface) {
             throw DriverException::invalidInterface($class, LocaleDriverInterface::class);
         }
 
