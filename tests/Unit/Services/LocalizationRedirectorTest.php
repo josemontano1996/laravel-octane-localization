@@ -8,7 +8,7 @@ use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationStateInterfa
 use Josemontano1996\LaravelOctaneLocalization\Contracts\URLParserInterface;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationRedirector;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->config = Mockery::mock(LocalizationConfigInterface::class);
     $this->state = Mockery::mock(LocalizationStateInterface::class);
     $this->urlParser = Mockery::mock(URLParserInterface::class);
@@ -20,19 +20,19 @@ beforeEach(function () {
     );
 });
 
-test('it should not redirect non-GET requests', function () {
+test('it should not redirect non-GET requests', function (): void {
     $request = Request::create('/test', 'POST');
     expect($this->redirector->shouldRedirect($request))->toBeFalse();
 });
 
-test('it should not redirect if redirection is disabled', function () {
+test('it should not redirect if redirection is disabled', function (): void {
     $request = Request::create('/test', 'GET');
     $this->config->shouldReceive('isRedirectionEnabled')->andReturn(false);
 
     expect($this->redirector->shouldRedirect($request))->toBeFalse();
 });
 
-test('it should not redirect AJAX or Livewire requests', function () {
+test('it should not redirect AJAX or Livewire requests', function (): void {
     $this->config->shouldReceive('isRedirectionEnabled')->andReturn(true);
 
     $ajaxRequest = Request::create('/test', 'GET');
@@ -44,7 +44,7 @@ test('it should not redirect AJAX or Livewire requests', function () {
     expect($this->redirector->shouldRedirect($livewireRequest))->toBeFalse();
 });
 
-test('it should not redirect excluded paths', function () {
+test('it should not redirect excluded paths', function (): void {
     $request = Request::create('/api/test', 'GET');
     $this->config->shouldReceive('isRedirectionEnabled')->andReturn(true);
     $this->config->shouldReceive('getRedirectionExcludedPaths')->andReturn(['api/*']);
@@ -52,7 +52,7 @@ test('it should not redirect excluded paths', function () {
     expect($this->redirector->shouldRedirect($request))->toBeFalse();
 });
 
-test('it should redirect if URL locale does not match detected locale', function () {
+test('it should redirect if URL locale does not match detected locale', function (): void {
     $request = Request::create('/en/test', 'GET');
     $this->config->shouldReceive('isRedirectionEnabled')->andReturn(true);
     $this->config->shouldReceive('getRedirectionExcludedPaths')->andReturn([]);
@@ -63,7 +63,7 @@ test('it should redirect if URL locale does not match detected locale', function
     expect($this->redirector->shouldRedirect($request))->toBeTrue();
 });
 
-test('it should not redirect if URL locale matches detected locale', function () {
+test('it should not redirect if URL locale matches detected locale', function (): void {
     $request = Request::create('/es/test', 'GET');
     $this->config->shouldReceive('isRedirectionEnabled')->andReturn(true);
     $this->config->shouldReceive('getRedirectionExcludedPaths')->andReturn([]);
@@ -74,7 +74,7 @@ test('it should not redirect if URL locale matches detected locale', function ()
     expect($this->redirector->shouldRedirect($request))->toBeFalse();
 });
 
-test('it can generate redirect response', function () {
+test('it can generate redirect response', function (): void {
     $request = Request::create('/test', 'GET');
     $this->state->shouldReceive('get')->andReturn('es');
     $this->urlParser->shouldReceive('getLocalizedUrl')

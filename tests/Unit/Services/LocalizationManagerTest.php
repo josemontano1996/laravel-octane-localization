@@ -14,7 +14,7 @@ use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationContext;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationManager;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationState;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->config = new LocalizationConfig;
     $this->state = new LocalizationState;
     $this->context = new LocalizationContext;
@@ -25,7 +25,7 @@ beforeEach(function () {
     Config::set('octane-localization.parameter_key', 'locale');
 });
 
-test('it can set locale manually', function () {
+test('it can set locale manually', function (): void {
     $this->manager->setLocale('es');
     expect($this->state->get())->toBe('es');
 
@@ -33,7 +33,7 @@ test('it can set locale manually', function () {
     expect($this->state->get())->toBe('en'); // Falls back to default
 });
 
-test('it can detect locale using drivers', function () {
+test('it can detect locale using drivers', function (): void {
     $driver = Mockery::mock(LocaleDriverInterface::class);
     $driver->shouldReceive('getLocale')->andReturn('es');
     $driver->shouldReceive('storeLocale')->once()->with('es', Mockery::any());
@@ -52,7 +52,7 @@ test('it can detect locale using drivers', function () {
     expect($this->state->get())->toBe('es');
 });
 
-test('it can discover locale using custom driver stack', function () {
+test('it can discover locale using custom driver stack', function (): void {
     $driver = Mockery::mock(LocaleDriverInterface::class);
     $driver->shouldReceive('getLocale')->andReturn('fr');
 
@@ -68,7 +68,7 @@ test('it can discover locale using custom driver stack', function () {
     expect($this->state->get())->toBe('fr');
 });
 
-test('it syncs with application state', function () {
+test('it syncs with application state', function (): void {
     $this->state->set('es');
 
     // Use current time to test Carbon
@@ -87,7 +87,7 @@ test('it syncs with application state', function () {
     expect(Carbon::getLocale())->toBe('es');
 });
 
-test('it can flush application state', function () {
+test('it can flush application state', function (): void {
     $config = app(LocalizationConfigInterface::class);
     $original = $config->getDefaultLocale();
     $mutated = $config->getDefaultFallbackLocale();

@@ -3,7 +3,7 @@
 use Josemontano1996\LaravelOctaneLocalization\Drivers\Concerns\DoesNotPersistLocale;
 use Symfony\Component\HttpFoundation\Request;
 
-it('does absolutely nothing to the request or the environment', function () {
+it('does absolutely nothing to the request or the environment', function (): void {
     $tester = new class
     {
         use DoesNotPersistLocale;

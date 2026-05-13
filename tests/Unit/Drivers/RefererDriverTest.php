@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\URLParserInterface;
 use Josemontano1996\LaravelOctaneLocalization\Drivers\RefererDriver;
 
-it('returns null if the referer header is missing', function () {
+it('returns null if the referer header is missing', function (): void {
     // 1. Arrange
     $parser = Mockery::mock(URLParserInterface::class);
     $driver = new RefererDriver($parser);
@@ -17,7 +17,7 @@ it('returns null if the referer header is missing', function () {
     expect($result)->toBeNull();
 });
 
-it('detects the locale using the url parser when referer is present', function () {
+it('detects the locale using the url parser when referer is present', function (): void {
     // 1. Arrange
     $refererUrl = 'https://example.com/es/dashboard';
     $expectedLocale = 'es';

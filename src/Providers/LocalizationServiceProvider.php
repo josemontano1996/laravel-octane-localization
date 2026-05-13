@@ -37,7 +37,7 @@ class LocalizationServiceProvider extends ServiceProvider
     public const string CONFIG_KEY = 'octane-localization';
 
     #[Override]
-    public function register()
+    public function register(): void
     {
         $this->mergeConfigFrom(self::CONFIG_PATH, self::CONFIG_KEY);
 
@@ -73,7 +73,7 @@ class LocalizationServiceProvider extends ServiceProvider
         foreach ($allUsedDrivers as $driverClass) {
             // Special binding for CookieDriver
             if ($driverClass === CookieDriver::class) {
-                $this->app->scoped($driverClass, fn() => new CookieDriver(
+                $this->app->scoped($driverClass, fn(): \Josemontano1996\LaravelOctaneLocalization\Drivers\CookieDriver => new CookieDriver(
                     $config
                 ));
 
@@ -101,7 +101,7 @@ class LocalizationServiceProvider extends ServiceProvider
         $localeManager = $this->app->make(LocalizationManagerInterface::class);
         $localeManager->reset();
 
-        Queue::before(function (JobProcessing $event) use ($localeManager) {
+        Queue::before(function (JobProcessing $event) use ($localeManager): void {
             $localeManager->reset();
         });
     }

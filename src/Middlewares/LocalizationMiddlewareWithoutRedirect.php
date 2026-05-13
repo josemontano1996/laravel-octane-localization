@@ -13,8 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 final readonly class LocalizationMiddlewareWithoutRedirect
 {
     public function __construct(
-        private LocalizationManagerInterface $manager,
-        private LocalizationRedirectorInterface $redirector
+        private LocalizationManagerInterface $manager
     ) {}
 
     public function handle(Request $request, Closure $next): Response

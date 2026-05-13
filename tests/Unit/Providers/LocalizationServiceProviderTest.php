@@ -14,13 +14,13 @@ use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationState;
 use Josemontano1996\LaravelOctaneLocalization\Providers\LocalizationServiceProvider;
 use Josemontano1996\LaravelOctaneLocalization\Services\SeoHelper;
 
-it('binds interfaces to implementations', function () {
+it('binds interfaces to implementations', function (): void {
     expect(app(LocalizationConfigInterface::class))->toBeInstanceOf(LocalizationConfig::class);
     expect(app(LocalizationManagerInterface::class))->toBeInstanceOf(LocalizationManager::class);
     expect(app(SeoHelperInterface::class))->toBeInstanceOf(SeoHelper::class);
 });
 
-it('registers localization state as a scoped service', function () {
+it('registers localization state as a scoped service', function (): void {
     // 1. Get the first instance
     $instance1 = app(LocalizationStateInterface::class);
 
@@ -38,7 +38,7 @@ it('registers localization state as a scoped service', function () {
         ->and($instance2)->toBeInstanceOf(LocalizationState::class);
 });
 
-it('registers the config as a singleton', function () {
+it('registers the config as a singleton', function (): void {
     $instance1 = app(LocalizationConfigInterface::class);
 
     // Even after clearing instances, singletons usually persist in tests
@@ -46,7 +46,7 @@ it('registers the config as a singleton', function () {
     expect(app()->isShared(LocalizationConfigInterface::class))->toBeTrue();
 });
 
-it('registers manager, redirector, context, and seo helper as scoped services', function () {
+it('registers manager, redirector, context, and seo helper as scoped services', function (): void {
     $scopedInterfaces = [
         LocalizationManagerInterface::class,
         LocalizationRedirectorInterface::class,
@@ -71,7 +71,7 @@ it('registers manager, redirector, context, and seo helper as scoped services', 
     }
 });
 
-it('registers config and url parser as true singletons', function () {
+it('registers config and url parser as true singletons', function (): void {
     $singletonInterfaces = [
         LocalizationConfigInterface::class,
         URLParserInterface::class,
@@ -86,7 +86,7 @@ it('registers config and url parser as true singletons', function () {
     }
 });
 
-it('prepends the livewire bridge middleware to the web group', function () {
+it('prepends the livewire bridge middleware to the web group', function (): void {
     $router = app('router');
     $middlewareGroups = $router->getMiddlewareGroups();
 
@@ -98,14 +98,14 @@ it('prepends the livewire bridge middleware to the web group', function () {
     expect($middlewareGroups['web'][0])->toBe(LivewireLocalizationBridge::class);
 });
 
-it('merges the package configuration', function () {
+it('merges the package configuration', function (): void {
     $config = config('octane-localization');
 
     expect($config)->toBeArray()
         ->and($config['parameter_key'])->toBe('locale');
 });
 
-it('calls reset on the locale manager during boot', function () {
+it('calls reset on the locale manager during boot', function (): void {
     // Swap the real manager for a mock so we can assert reset() is called
     $manager = Mockery::mock(LocalizationManagerInterface::class);
     $manager->shouldReceive('reset')->once();

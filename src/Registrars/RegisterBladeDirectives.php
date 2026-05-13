@@ -16,26 +16,26 @@ class RegisterBladeDirectives
      */
     public static function register(): void
     {
-        Blade::directive('t', function ($expression) {
+        Blade::directive('t', function ($expression): string {
             return "<?php echo __($expression); ?>";
         });
 
         // 1. @currentLocale
         // Outputs the current application locale string (e.g. 'en')
-        Blade::directive('currentLocale', function () {
+        Blade::directive('currentLocale', function (): string {
             return '<?php echo app()->getLocale(); ?>';
         });
 
         // 2. @isLocale('en')
         // Supports @elseisLocale('es'), @else and @endisLocale automatically.
-        Blade::if('isLocale', function (string $locale) {
+        Blade::if('isLocale', function (string $locale): bool {
             return app()->getLocale() === $locale;
         });
 
         // 4. @supportedLocales($code, $data) ... @endsupportedLocales
         // Loops through all locales defined in the config.
-        Blade::directive('supportedLocales', function (string $expression) {
-            if (empty($expression)) {
+        Blade::directive('supportedLocales', function (string $expression): string {
+            if ($expression === '' || $expression === '0') {
                 $expression = '$code, $data';
             }
 
@@ -46,19 +46,19 @@ class RegisterBladeDirectives
             return '<?php foreach(app('.LocalizationConfigInterface::class."::class)->getSupportedLocales() as {$key} => {$value}): ?>";
         });
 
-        Blade::directive('endsupportedLocales', function () {
+        Blade::directive('endsupportedLocales', function (): string {
             return '<?php endforeach; ?>';
         });
 
         // 5. @localizedUrl('en')
         // Generates a URL for the current request but pointing to another locale.
-        Blade::directive('localizedUrl', function (string $locale) {
+        Blade::directive('localizedUrl', function (string $locale): string {
             return '<?php echo app('.URLParserInterface::class."::class)->getLocalizedUrl(url()->current(), {$locale}); ?>";
         });
 
         // 6. @alternateLinks
         // Generates <link rel="alternate" ... /> tags for SEO in the <head>
-        Blade::directive('alternateLinks', function () {
+        Blade::directive('alternateLinks', function (): string {
             return '<?php echo app('.SeoHelperInterface::class.'::class)->getAlternateLinks(); ?>';
         });
     }

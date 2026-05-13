@@ -3,7 +3,7 @@
 use Josemontano1996\LaravelOctaneLocalization\Contracts\Support\LocalizationAwareJob;
 use Josemontano1996\LaravelOctaneLocalization\Queue\LocalizationQueueMiddleware;
 
-it('restores and resets localization for aware jobs', function () {
+it('restores and resets localization for aware jobs', function (): void {
     // 1. Arrange
     $middleware = new LocalizationQueueMiddleware;
 
@@ -15,7 +15,7 @@ it('restores and resets localization for aware jobs', function () {
     $job->shouldReceive('resetLocalization')->once()->ordered();
 
     $nextCalled = false;
-    $next = function ($job) use (&$nextCalled) {
+    $next = function ($job) use (&$nextCalled): void {
         $nextCalled = true;
     };
 
@@ -26,7 +26,7 @@ it('restores and resets localization for aware jobs', function () {
     expect($nextCalled)->toBeTrue();
 });
 
-it('resets localization even if the job fails', function () {
+it('resets localization even if the job fails', function (): void {
     // 1. Arrange
     $middleware = new LocalizationQueueMiddleware;
     $job = Mockery::mock(LocalizationAwareJob::class);
@@ -35,7 +35,7 @@ it('resets localization even if the job fails', function () {
     // This MUST be called even on failure
     $job->shouldReceive('resetLocalization')->once();
 
-    $next = function ($job) {
+    $next = function ($job): void {
         throw new Exception('Job failed');
     };
 
@@ -49,7 +49,7 @@ it('resets localization even if the job fails', function () {
     // Mockery will verify resetLocalization was called in the finally block
 });
 
-it('does nothing for jobs that are not localization aware', function () {
+it('does nothing for jobs that are not localization aware', function (): void {
     // 1. Arrange
     $middleware = new LocalizationQueueMiddleware;
 
@@ -57,7 +57,7 @@ it('does nothing for jobs that are not localization aware', function () {
     $job = new class {};
 
     $nextCalled = false;
-    $next = function ($job) use (&$nextCalled) {
+    $next = function ($job) use (&$nextCalled): void {
         $nextCalled = true;
     };
 
@@ -69,7 +69,7 @@ it('does nothing for jobs that are not localization aware', function () {
     // No exceptions thrown, no interface methods called
 });
 
-it('calls resetLocalization even if the job throws an exception', function () {
+it('calls resetLocalization even if the job throws an exception', function (): void {
     // 1. Arrange
     $middleware = new LocalizationQueueMiddleware;
     $job = Mockery::mock(LocalizationAwareJob::class);
@@ -79,7 +79,7 @@ it('calls resetLocalization even if the job throws an exception', function () {
     $job->shouldReceive('resetLocalization')->once();
 
     // A closure that simulates a failing job
-    $next = function ($job) {
+    $next = function ($job): void {
         throw new RuntimeException('Database connection failed');
     };
 
