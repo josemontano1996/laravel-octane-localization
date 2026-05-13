@@ -12,7 +12,7 @@ class LocalizedJobStub
     use LocalizedJob;
 }
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->context = Mockery::mock(LocalizationContextInterface::class);
     $this->manager = Mockery::mock(LocalizationManagerInterface::class);
 
@@ -22,7 +22,7 @@ beforeEach(function () {
     $this->job = new LocalizedJobStub;
 });
 
-test('it restores localization when locale exists in context', function () {
+test('it restores localization when locale exists in context', function (): void {
     $this->context->shouldReceive('get')->andReturn('es');
 
     $this->manager->shouldReceive('setLocale')->once()->with('es');
@@ -31,7 +31,7 @@ test('it restores localization when locale exists in context', function () {
     $this->job->restoreLocalization();
 });
 
-test('it does nothing when no locale exists in context', function () {
+test('it does nothing when no locale exists in context', function (): void {
     $this->context->shouldReceive('get')->andReturn(null);
 
     $this->manager->shouldNotReceive('setLocale');
@@ -40,7 +40,7 @@ test('it does nothing when no locale exists in context', function () {
     $this->job->restoreLocalization();
 });
 
-test('it resets localization', function () {
+test('it resets localization', function (): void {
     $this->manager->shouldReceive('reset')->once();
 
     $this->job->resetLocalization();

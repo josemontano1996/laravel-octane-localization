@@ -12,8 +12,8 @@ When a request enters the application, the `LocalizationManager` coordinates the
 
 ## 2. Container Strategy
 The package uses container bindings to isolate state safely:
-- **Scoped** bindings are used for stateful request data such as `LocalizationState`, `LocalizationMiddleware`, and driver instances that may hold per-request state.
-- **Singleton** bindings are used for stateless services like `LocalizationConfig`, `URLParser`, `SeoHelper`, and `LocalizationManager`, since they do not retain locale data between calls.
+- **Scoped** bindings are used for stateful request data such as `LocalizationState`, `LocalizationMiddleware`, `LocalizationMiddlewareWithoutRedirect` and driver instances that may hold per-request state.
+- **Singleton** bindings are used for stateless services like `LocalizationConfig` and `URLParser`, since they do not retain locale data between calls.
 
 ## 3. The Livewire Bridge
 Livewire requests do not always include a localized route segment, so the package provides a special fallback path:
@@ -31,6 +31,13 @@ Queued jobs are executed in the same worker process as previous jobs, so they re
 - The locale is transported into the queued payload via Laravel 11 `Context`.
 - `LocalizationQueueMiddleware` restores the locale before `handle()` runs.
 - It always calls `resetLocalization()` in a `finally` block so worker state is returned to the default locale after job execution.
+
+## 6. Routing & Macros
+The package provides specialized route macros to ensure LocalizationMiddleware and LocalizationMiddlewareWithoutRedirect are applied correctly. Developers should never apply the middleware manually to groups:
+
+localizedWithPrefix: Essential for SEO/URL-based localization. It handles the {locale} prefix and applies the whereIn regex constraint to the route segment automatically.
+
+localizedWithoutPrefix: Used for Clean URL localization. Use this when the locale is determined by Session, Cookies, or Headers without modifying the URI. It wraps the routes in the middleware without applying any prefix logic.
 
 ## AI / Boost Model Guidance
 - Always treat this package as Octane-safe: do not recommend simple global locale storage without reset.

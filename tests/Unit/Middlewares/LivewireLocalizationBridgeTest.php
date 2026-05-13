@@ -8,7 +8,7 @@ use Josemontano1996\LaravelOctaneLocalization\Enums\SupportedExtensions;
 use Josemontano1996\LaravelOctaneLocalization\Middlewares\LivewireLocalizationBridge;
 use Josemontano1996\LaravelOctaneLocalization\Tests\TestCase;
 
-it('bridges localization when a Livewire header is present', function () {
+it('bridges localization when a Livewire header is present', function (): void {
     // 1. Arrange
     // Use the real config from your TestCase setup
     $config = app(LocalizationConfigInterface::class);
@@ -31,7 +31,7 @@ it('bridges localization when a Livewire header is present', function () {
     $middleware = new LivewireLocalizationBridge($manager, $config);
 
     // 2. Act
-    $response = $middleware->handle($request, function ($req) {
+    $response = $middleware->handle($request, function ($req): Response {
         return new Response('Livewire Handled');
     });
 
@@ -39,7 +39,7 @@ it('bridges localization when a Livewire header is present', function () {
     expect($response->getContent())->toBe('Livewire Handled');
 });
 
-it('bypasses logic when the Livewire header is missing', function () {
+it('bypasses logic when the Livewire header is missing', function (): void {
     // 1. Arrange
     $request = Request::create('/', 'GET');
     $manager = Mockery::mock(LocalizationManagerInterface::class);
@@ -52,7 +52,7 @@ it('bypasses logic when the Livewire header is missing', function () {
     $middleware = new LivewireLocalizationBridge($manager, $config);
 
     // 2. Act
-    $response = $middleware->handle($request, function ($req) {
+    $response = $middleware->handle($request, function ($req): Response {
         return new Response('Normal Request');
     });
 

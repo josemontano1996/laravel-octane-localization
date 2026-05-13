@@ -8,7 +8,7 @@ use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationRedirectorIn
 use Josemontano1996\LaravelOctaneLocalization\Middlewares\LocalizationMiddleware;
 use Josemontano1996\LaravelOctaneLocalization\Tests\TestCase;
 
-it('detects locale, syncs, and adds headers to the response', function () {
+it('detects locale, syncs, and adds headers to the response', function (): void {
     // 1. Arrange
     $request = Request::create('/', 'GET');
     $manager = Mockery::mock(LocalizationManagerInterface::class);
@@ -28,7 +28,7 @@ it('detects locale, syncs, and adds headers to the response', function () {
     app()->setLocale($locale);
 
     // 2. Act
-    $response = $middleware->handle($request, function ($req) {
+    $response = $middleware->handle($request, function ($req): Response {
         return new Response('Hello World');
     });
 
@@ -38,7 +38,7 @@ it('detects locale, syncs, and adds headers to the response', function () {
     expect($response->headers->get('Vary'))->toContain('Accept-Language');
 });
 
-it('returns a redirect response if the redirector triggers', function () {
+it('returns a redirect response if the redirector triggers', function (): void {
     // 1. Arrange
     $request = Request::create('/', 'GET');
     $manager = Mockery::mock(LocalizationManagerInterface::class);
@@ -57,7 +57,7 @@ it('returns a redirect response if the redirector triggers', function () {
     $middleware = new LocalizationMiddleware($manager, $redirector);
 
     // 2. Act
-    $response = $middleware->handle($request, function ($req) {
+    $response = $middleware->handle($request, function ($req): Response {
         return new Response('Should not see this');
     });
 
@@ -67,7 +67,7 @@ it('returns a redirect response if the redirector triggers', function () {
     expect($response->headers->get('Location'))->toBe("/{$locale}/home");
 });
 
-it('appends Accept-Language to existing Vary headers', function () {
+it('appends Accept-Language to existing Vary headers', function (): void {
     // 1. Arrange
     $manager = Mockery::mock(LocalizationManagerInterface::class);
     $redirector = Mockery::mock(LocalizationRedirectorInterface::class);
@@ -78,7 +78,7 @@ it('appends Accept-Language to existing Vary headers', function () {
     $middleware = new LocalizationMiddleware($manager, $redirector);
 
     // 2. Act
-    $response = $middleware->handle(new Request, function ($req) {
+    $response = $middleware->handle(new Request, function ($req): Response {
         $res = new Response;
         $res->headers->set('Vary', 'User-Agent');
 

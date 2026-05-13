@@ -18,6 +18,7 @@ use Josemontano1996\LaravelOctaneLocalization\Contracts\URLParserInterface;
 use Josemontano1996\LaravelOctaneLocalization\Drivers\CookieDriver;
 use Josemontano1996\LaravelOctaneLocalization\Middlewares\LivewireLocalizationBridge;
 use Josemontano1996\LaravelOctaneLocalization\Middlewares\LocalizationMiddleware;
+use Josemontano1996\LaravelOctaneLocalization\Middlewares\LocalizationMiddlewareWithoutRedirect;
 use Josemontano1996\LaravelOctaneLocalization\Registrars\RegisterBladeDirectives;
 use Josemontano1996\LaravelOctaneLocalization\Registrars\RegisterMacros;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationConfig;
@@ -31,19 +32,18 @@ use Override;
 
 class LocalizationServiceProvider extends ServiceProvider
 {
-    public const string CONFIG_PATH = __DIR__ . '/../../config/octane-localization.php';
+    public const string CONFIG_PATH = __DIR__.'/../../config/octane-localization.php';
 
     public const string CONFIG_KEY = 'octane-localization';
 
     #[Override]
-    public function register()
+    public function register(): void
     {
         $this->mergeConfigFrom(self::CONFIG_PATH, self::CONFIG_KEY);
 
         // 1. Core Services (Singletons)
         $this->app->singleton(LocalizationConfigInterface::class, LocalizationConfig::class);
         $this->app->singleton(URLParserInterface::class, URLParser::class);
-
 
         $this->app->scoped(SeoHelperInterface::class, SeoHelper::class);
         $this->app->scoped(LocalizationRedirectorInterface::class, LocalizationRedirector::class);
@@ -53,6 +53,7 @@ class LocalizationServiceProvider extends ServiceProvider
         // 2. Data/State (Scoped - Fresh for every request)
         $this->app->scoped(LocalizationStateInterface::class, LocalizationState::class);
         $this->app->scoped(LocalizationMiddleware::class);
+        $this->app->scoped(LocalizationMiddlewareWithoutRedirect::class);
         $this->app->scoped(LivewireLocalizationBridge::class);
 
         $config = $this->app->make(LocalizationConfigInterface::class);
@@ -71,7 +72,7 @@ class LocalizationServiceProvider extends ServiceProvider
         foreach ($allUsedDrivers as $driverClass) {
             // Special binding for CookieDriver
             if ($driverClass === CookieDriver::class) {
-                $this->app->scoped($driverClass, fn() => new CookieDriver(
+                $this->app->scoped($driverClass, fn (): CookieDriver => new CookieDriver(
                     $config
                 ));
 
@@ -87,7 +88,7 @@ class LocalizationServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                self::CONFIG_PATH => config_path(self::CONFIG_KEY . '.php'),
+                self::CONFIG_PATH => config_path(self::CONFIG_KEY.'.php'),
             ], self::CONFIG_KEY);
         }
         // Lazy resolution
@@ -99,7 +100,7 @@ class LocalizationServiceProvider extends ServiceProvider
         $localeManager = $this->app->make(LocalizationManagerInterface::class);
         $localeManager->reset();
 
-        Queue::before(function (JobProcessing $event) use ($localeManager) {
+        Queue::before(function (JobProcessing $event) use ($localeManager): void {
             $localeManager->reset();
         });
     }

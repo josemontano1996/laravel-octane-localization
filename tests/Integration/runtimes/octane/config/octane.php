@@ -73,7 +73,7 @@ return [
         RequestReceived::class => [
             ...Octane::prepareApplicationForNextOperation(),
             ...Octane::prepareApplicationForNextRequest(),
-                ResetLocalizationStateListener::class, 
+            ResetLocalizationStateListener::class,
             //
         ],
 

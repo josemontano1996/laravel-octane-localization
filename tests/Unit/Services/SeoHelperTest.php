@@ -10,7 +10,7 @@ use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationConfigInterf
 use Josemontano1996\LaravelOctaneLocalization\Contracts\SeoHelperInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\URLParserInterface;
 
-beforeEach(function () {
+beforeEach(function (): void {
     // These are registered by the ServiceProvider in the base TestCase
     $this->config = app(LocalizationConfigInterface::class);
     $this->parser = app(URLParserInterface::class);
@@ -21,7 +21,7 @@ beforeEach(function () {
     Config::set('octane-localization.default_locale', 'en');
 });
 
-test('it generates alternate links for all supported locales using real services', function () {
+test('it generates alternate links for all supported locales using real services', function (): void {
     // 1. Simulate a request to a specific path
     // Note: Request::create only creates the object; we must bind it to the app
     // to affect the url() and current request context.
@@ -38,7 +38,7 @@ test('it generates alternate links for all supported locales using real services
         ->and($links)->toContain('<link rel="alternate" hreflang="x-default" href="http://localhost/en/test-page" />');
 });
 
-test('it handles query parameters in alternate links', function () {
+test('it handles query parameters in alternate links', function (): void {
     $request = Request::create('http://localhost/search?q=laravel');
     $this->app->instance('request', $request);
 

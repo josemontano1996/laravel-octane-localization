@@ -6,12 +6,12 @@ use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationConfigInterf
 
 Route::get('/unlocalized', function (LocalizationConfigInterface $config) {
     $expected = $config->getDefaultLocale(); // default locale passed by the test script
-    $actual   = BleedTestData::capture($config);
+    $actual = BleedTestData::capture($config);
     $expectedData = new BleedTestData($expected, $expected, $expected, $expected);
-    $mismatches   = $actual->findMismatches($expectedData);
+    $mismatches = $actual->findMismatches($expectedData);
 
     return response()->json([
-        'bleeded'    => $mismatches !== null,
+        'bleeded' => $mismatches !== null,
         'mismatches' => $mismatches,
     ]);
 });
@@ -24,7 +24,21 @@ Route::localizedWithPrefix(function () {
         $mismatches = $actual->findMismatches($expectedData);
 
         return response()->json([
-            'bleeded'    => $mismatches !== null,
+            'bleeded' => $mismatches !== null,
+            'mismatches' => $mismatches,
+        ]);
+    });
+});
+
+Route::localizedWithoutPrefix(function () {
+    Route::get('/localized-without-prefix', function (LocalizationConfigInterface $config) {
+        $expected = request('expected');
+        $actual = BleedTestData::capture($config);
+        $expectedData = new BleedTestData($expected, $expected, $expected, $expected);
+        $mismatches = $actual->findMismatches($expectedData);
+
+        return response()->json([
+            'bleeded' => $mismatches !== null,
             'mismatches' => $mismatches,
         ]);
     });

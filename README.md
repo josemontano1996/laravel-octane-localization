@@ -80,13 +80,30 @@ return [
 
 ## Usage
 
-### Route Macro (localizedWithPrefix)
-The easiest way to set up localized routes is using the provided macro. It automatically applies the parameter_key prefix (e.g., /{locale}) and attaches the necessary middleware.
+### Route Macros
+The package provides two macros to handle localization. 
+
+1. localizedWithPrefix
+Use this for URL-based localization (e.g., [example.com/en/dashboard](https://example.com/en/dashboard)). It automatically adds the {locale} prefix and applies a whereIn constraint based on your supported locales. This macro applies the  LocalizationMiddleware to the group.
 
 ```php
 Route::localizedWithPrefix(function () {
     Route::get('/dashboard', function () {
         return view('dashboard');
+    });
+});
+```
+
+2. localizedWithoutPrefix
+Use this if you want to detect the locale via Session, Cookies, or Browser Headers without changing the URL structure (e.g., [example.com/dashboard](https://example.com/dashboard)). This macro applies the  LocalizationMiddlewareWithoutRedirect to the group.
+
+
+This is ideal for internal dashboards or applications where a clean URL is preferred over SEO-friendly language segments.
+
+```php
+Route::localizedWithoutPrefix(function () {
+    Route::get('/profile', function () {
+        return view('profile');
     });
 });
 ```

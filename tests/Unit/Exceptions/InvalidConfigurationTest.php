@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 use Josemontano1996\LaravelOctaneLocalization\Exceptions\InvalidConfiguration;
 
-it('creates a missing key exception', function () {
+it('creates a missing key exception', function (): void {
     // 1. Act
     $exception = InvalidConfiguration::missingKey('octane-localization.parameter_key');
 
@@ -11,7 +13,7 @@ it('creates a missing key exception', function () {
         ->and($exception->getMessage())->toBe('The configuration key [octane-localization.parameter_key] is missing. This is required for the localization engine.');
 });
 
-it('creates a missing supported locales exception', function () {
+it('creates a missing supported locales exception', function (): void {
     // 1. Act
     $exception = InvalidConfiguration::missingSupportedLocales('octane-localization.supported_locales');
 
@@ -20,7 +22,7 @@ it('creates a missing supported locales exception', function () {
         ->and($exception->getMessage())->toBe('You must define at least one locale in [octane-localization.supported_locales].');
 });
 
-it('creates an invalid type exception', function () {
+it('creates an invalid type exception', function (): void {
     // 1. Act
     $exception = InvalidConfiguration::invalidType('octane-localization.supported_locales', 'array');
 

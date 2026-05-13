@@ -19,7 +19,7 @@ final readonly class URLParser implements URLParserInterface
 
     public function getLocaleFromUrl(string $url): ?string
     {
-        if (empty($url)) {
+        if ($url === '' || $url === '0') {
             return null;
         }
 

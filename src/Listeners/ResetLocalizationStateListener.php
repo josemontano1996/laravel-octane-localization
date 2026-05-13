@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 declare(strict_types=1);
 
@@ -10,6 +10,6 @@ class ResetLocalizationStateListener
 {
     public function handle(mixed $event): void
     {
-       app(LocalizationManagerInterface::class)->reset();
+        app(LocalizationManagerInterface::class)->reset();
     }
 }

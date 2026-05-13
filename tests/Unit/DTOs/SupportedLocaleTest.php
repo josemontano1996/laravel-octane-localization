@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 use Josemontano1996\LaravelOctaneLocalization\DTOs\SupportedLocale;
 
-it('can be created from an array', function () {
+it('can be created from an array', function (): void {
     $code = 'es';
     $data = [
         'name' => 'Spanish',
@@ -17,7 +19,7 @@ it('can be created from an array', function () {
         ->and($locale->extra)->toBe(['native' => 'Español', 'region' => 'Spain']);
 });
 
-it('uses the code as the name if the name is missing', function () {
+it('uses the code as the name if the name is missing', function (): void {
     $locale = SupportedLocale::fromArray('fr', ['extra_stuff' => 'foo']);
 
     expect($locale->name)->toBe('fr');

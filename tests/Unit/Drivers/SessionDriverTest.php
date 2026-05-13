@@ -7,7 +7,7 @@ use Josemontano1996\LaravelOctaneLocalization\Drivers\SessionDriver;
 use Josemontano1996\LaravelOctaneLocalization\Tests\TestCase;
 use Symfony\Component\HttpFoundation\Session\Storage\Handler\NullSessionHandler;
 
-it('retrieves the locale from the session', function () {
+it('retrieves the locale from the session', function (): void {
     // 1. Arrange
     $config = app(LocalizationConfigInterface::class);
     $driver = new SessionDriver($config);
@@ -26,7 +26,7 @@ it('retrieves the locale from the session', function () {
     expect($result)->toBe(TestCase::ALTERNATIVE_LOCALE);
 });
 
-it('stores the locale in the session', function () {
+it('stores the locale in the session', function (): void {
     // 1. Arrange
     $config = app(LocalizationConfigInterface::class);
     $driver = new SessionDriver($config);

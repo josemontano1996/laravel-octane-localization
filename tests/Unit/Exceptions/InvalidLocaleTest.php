@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 use Josemontano1996\LaravelOctaneLocalization\Exceptions\InvalidLocale;
 
-it('creates an exception for empty locales', function () {
+it('creates an exception for empty locales', function (): void {
     // 1. Act
     $exception = InvalidLocale::becauseItIsEmpty();
 
@@ -11,7 +13,7 @@ it('creates an exception for empty locales', function () {
         ->and($exception->getMessage())->toBe('The locale cannot be empty.');
 });
 
-it('creates an exception for unsupported locales', function () {
+it('creates an exception for unsupported locales', function (): void {
     // 1. Arrange
     $unsupported = 'zh';
 

@@ -6,7 +6,7 @@ use Josemontano1996\LaravelOctaneLocalization\Contracts\URLParserInterface;
 use Josemontano1996\LaravelOctaneLocalization\Drivers\UrlDriver;
 use Josemontano1996\LaravelOctaneLocalization\Tests\TestCase;
 
-it('returns the locale if the parser finds a supported locale in the URL', function () {
+it('returns the locale if the parser finds a supported locale in the URL', function (): void {
     // 1. Arrange
     $locale = TestCase::ALTERNATIVE_LOCALE;
 
@@ -31,7 +31,7 @@ it('returns the locale if the parser finds a supported locale in the URL', funct
     expect($result)->toBe($locale);
 });
 
-it('returns null if the parser finds an unsupported locale', function () {
+it('returns null if the parser finds an unsupported locale', function (): void {
     // 1. Arrange
     $unsupported = TestCase::UNSUPPORTED_LOCALE;
 
@@ -56,7 +56,7 @@ it('returns null if the parser finds an unsupported locale', function () {
     expect($result)->toBeNull();
 });
 
-it('returns null if the parser finds nothing', function () {
+it('returns null if the parser finds nothing', function (): void {
     // 1. Arrange
     $parser = Mockery::mock(URLParserInterface::class);
     $parser->shouldReceive('getLocaleFromRequest')

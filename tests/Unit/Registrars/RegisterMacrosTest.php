@@ -7,52 +7,74 @@ namespace Josemontano1996\LaravelOctaneLocalization\Tests\Unit\Registrars;
 use Illuminate\Support\Facades\Route;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationConfigInterface;
 use Josemontano1996\LaravelOctaneLocalization\Middlewares\LocalizationMiddleware;
+use Josemontano1996\LaravelOctaneLocalization\Middlewares\LocalizationMiddlewareWithoutRedirect;
 use Josemontano1996\LaravelOctaneLocalization\Registrars\RegisterMacros;
 use Mockery;
 
-beforeEach(function () {
+beforeEach(function (): void {
     RegisterMacros::register();
-    
+
     // Setup a fresh mock for every test to avoid expectation pollution
     $this->config = Mockery::mock(LocalizationConfigInterface::class);
     $this->app->instance(LocalizationConfigInterface::class, $this->config);
 });
 
-test('it registers localizedWithPrefix macro', function () {
+test('it registers localizedWithPrefix macro', function (): void {
     expect(Route::hasMacro('localizedWithPrefix'))->toBeTrue();
 });
 
-test('localizedWithPrefix macro creates a prefixed group with middleware', function () {
+test('localizedWithPrefix macro creates a prefixed group with middleware', function (): void {
     $this->config->shouldReceive('getParameterKey')->andReturn('lang');
     $this->config->shouldReceive('getSupportedLocaleCodes')->andReturn(['en', 'es']);
 
-    Route::localizedWithPrefix(function () {
-        Route::get('/test-basic', fn () => 'test')->name('test.basic');
+    Route::localizedWithPrefix(function (): void {
+        Route::get('/test-basic', fn (): string => 'test')->name('test.basic');
     });
 
-    $route = collect(Route::getRoutes())->first(fn ($r) => $r->getName() === 'test.basic');
+    $route = collect(Route::getRoutes())->first(fn ($r): bool => $r->getName() === 'test.basic');
 
     expect($route)->not->toBeNull()
         ->and($route->getPrefix())->toBe('{lang}') // Assert exact match
         ->and($route->gatherMiddleware())->toContain(LocalizationMiddleware::class);
 });
 
-test('localizedWithPrefix macro applies whereIn constraint to the prefix', function () {
+test('localizedWithPrefix macro applies whereIn constraint to the prefix', function (): void {
     $this->config->shouldReceive('getParameterKey')->andReturn('locale');
     $this->config->shouldReceive('getSupportedLocaleCodes')->andReturn(['en', 'es', 'fr']);
 
-    Route::localizedWithPrefix(function () {
-        Route::get('/test-constraint', fn () => 'test')->name('test.constraint');
+    Route::localizedWithPrefix(function (): void {
+        Route::get('/test-constraint', fn (): string => 'test')->name('test.constraint');
     });
 
-    $route = collect(Route::getRoutes())->first(fn ($r) => $r->getName() === 'test.constraint');
+    $route = collect(Route::getRoutes())->first(fn ($r): bool => $r->getName() === 'test.constraint');
 
     expect($route)->not->toBeNull();
-    
+
     // In Laravel, the whereIn constraint is compiled into a regex pattern
     // Access the 'wheres' property directly on the Route object
-    $wheres = $route->wheres; 
+    $wheres = $route->wheres;
 
     expect($wheres)->toHaveKey('locale')
         ->and($wheres['locale'])->toBe('en|es|fr');
+});
+
+test('it registers localizedWithoutPrefix macro', function (): void {
+    expect(Route::hasMacro('localizedWithoutPrefix'))->toBeTrue();
+});
+
+test('localizedWithoutPrefix macro applies middleware but no prefix', function (): void {
+    // 1. Define a route using the macro
+    Route::localizedWithoutPrefix(function (): void {
+        Route::get('/no-prefix-test', fn (): string => 'ok')->name('test.no_prefix');
+    });
+
+    // 2. Retrieve the route from the collector
+    $route = collect(Route::getRoutes())->first(fn ($r): bool => $r->getName() === 'test.no_prefix');
+
+    // 3. Assertions
+    expect($route)->not->toBeNull()
+        // Ensure NO prefix was applied
+        ->and($route->getPrefix())->toBeEmpty()
+        // Ensure the Middleware IS present
+        ->and($route->gatherMiddleware())->toContain(LocalizationMiddlewareWithoutRedirect::class);
 });

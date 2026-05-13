@@ -30,6 +30,7 @@ final readonly class LivewireLocalizationBridge
 
         return $next($request);
     }
+
     /**
      * Determine if the request is coming from Livewire.
      */

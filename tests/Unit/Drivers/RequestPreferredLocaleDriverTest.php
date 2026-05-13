@@ -5,7 +5,7 @@ use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationConfigInterf
 use Josemontano1996\LaravelOctaneLocalization\Drivers\RequestPreferredLocaleDriver;
 use Josemontano1996\LaravelOctaneLocalization\Tests\TestCase;
 
-it('detects the preferred locale from the request headers using testcase constants', function () {
+it('detects the preferred locale from the request headers using testcase constants', function (): void {
     // 1. Arrange
     $supported = TestCase::SUPPORTED_LOCALES;
     $preferred = TestCase::FALLBACK_LOCALE;
@@ -28,7 +28,7 @@ it('detects the preferred locale from the request headers using testcase constan
     expect($result)->toBe($preferred);
 });
 
-it('returns null or first match when header is an unsupported locale', function () {
+it('returns null or first match when header is an unsupported locale', function (): void {
     // 1. Arrange
     $config = Mockery::mock(LocalizationConfigInterface::class);
     $config->shouldReceive('getSupportedLocaleCodes')
