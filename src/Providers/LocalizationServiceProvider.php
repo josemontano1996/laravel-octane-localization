@@ -18,6 +18,7 @@ use Josemontano1996\LaravelOctaneLocalization\Contracts\URLParserInterface;
 use Josemontano1996\LaravelOctaneLocalization\Drivers\CookieDriver;
 use Josemontano1996\LaravelOctaneLocalization\Middlewares\LivewireLocalizationBridge;
 use Josemontano1996\LaravelOctaneLocalization\Middlewares\LocalizationMiddleware;
+use Josemontano1996\LaravelOctaneLocalization\Middlewares\LocalizationMiddlewareWithoutRedirect;
 use Josemontano1996\LaravelOctaneLocalization\Registrars\RegisterBladeDirectives;
 use Josemontano1996\LaravelOctaneLocalization\Registrars\RegisterMacros;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationConfig;
@@ -53,6 +54,7 @@ class LocalizationServiceProvider extends ServiceProvider
         // 2. Data/State (Scoped - Fresh for every request)
         $this->app->scoped(LocalizationStateInterface::class, LocalizationState::class);
         $this->app->scoped(LocalizationMiddleware::class);
+        $this->app->scoped(LocalizationMiddlewareWithoutRedirect::class);
         $this->app->scoped(LivewireLocalizationBridge::class);
 
         $config = $this->app->make(LocalizationConfigInterface::class);

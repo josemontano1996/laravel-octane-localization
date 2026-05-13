@@ -34,7 +34,6 @@ trap cleanup EXIT
 
 # 4. Wait for Octane
 # OCTANE_URL should be the base URL for the test script.
-# We'll default to localhost:80 because that's what's in compose.yaml
 export OCTANE_URL="${OCTANE_URL:-http://localhost:80}"
 HEALTH_CHECK_URL="$OCTANE_URL/unlocalized"
 

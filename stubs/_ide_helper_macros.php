@@ -3,6 +3,7 @@
 namespace Illuminate\Support\Facades {
     /**
      * @method static \Illuminate\Routing\RouteRegistrar localizedWithPrefix(callable|null $callback = null)
+    * @method static \Illuminate\Routing\RouteRegistrar localizedWithoutPrefix(callable|null $callback = null)
      *
      * @see \Josemontano1996\LaravelOctaneLocalization\Registrars\RegisterMacros
      */
@@ -11,8 +12,8 @@ namespace Illuminate\Support\Facades {
 
 namespace Illuminate\Routing {
     /**
+     * @method \Illuminate\Routing\RouteRegistrar localizedWithoutPrefix(callable|null $callback = null)
      * @method \Illuminate\Routing\RouteRegistrar localizedWithPrefix(callable|null $callback = null)
-     *
      * @see \Josemontano1996\LaravelOctaneLocalization\Registrars\RegisterMacros
      */
     class Router {}

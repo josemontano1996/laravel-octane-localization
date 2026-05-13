@@ -29,3 +29,17 @@ Route::localizedWithPrefix(function () {
         ]);
     });
 });
+
+Route::localizedWithoutPrefix(function () {
+    Route::get('/localized-without-prefix', function (LocalizationConfigInterface $config) {
+        $expected = request('expected');
+        $actual = BleedTestData::capture($config);
+        $expectedData = new BleedTestData($expected, $expected, $expected, $expected);
+        $mismatches = $actual->findMismatches($expectedData);
+
+        return response()->json([
+            'bleeded'    => $mismatches !== null,
+            'mismatches' => $mismatches,
+        ]);
+    });
+});

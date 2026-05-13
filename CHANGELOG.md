@@ -4,6 +4,9 @@ Date: 13 May, 2026
 Author: Jose Manuel Montano Mengual (jm3develop@gmail.com)
 
 ## 🚀 Added
-- Added string interpolation to localizedWithPrefix macro
 
-## 🐞 Fixed
+- Implemented LocalizationMiddlewareWithoutRedirect middleware
+- Implemented localizedWithoutPrefix macro
+
+##  Refactor
+- Macros: use string interpolation for locale prefix

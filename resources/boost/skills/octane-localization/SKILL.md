@@ -14,6 +14,7 @@ This package provides state-safe, high-performance localization for Laravel, spe
 - The package is built around a strict Octane-safe lifecycle: **detect -> sync -> reset**.
 - Localized state must never be allowed to leak between requests or queued jobs.
 - `parameter_key` is used for route locale segments and persistence drivers such as session/cookie storage.
+- Routing Strategy: Use localizedWithPrefix for SEO-friendly URLs (e.g., /en/home). Use localizedWithoutPrefix for session/header-based detection without changing the URL.
 - Livewire uses `ext.livewire.drivers` and `LivewireLocalizationBridge` to preserve locale when route segments are absent.
 - The package requires `ResetLocalizationStateListener` to be registered in `config/octane.php` listeners so Octane worker state is reset correctly.
 - Queued jobs must restore the locale from Context and reset after execution.
@@ -33,16 +34,24 @@ This package uses **scoped container bindings** for stateful locales and **singl
 ### Key Features / Example Usage
 
 **1. Localized Routing**
-Use the provided Route macro to apply locale path prefixes and middleware automatically.
-
+Apply localization middleware with  URI prefixes.
 @verbatim
-<code-snippet name="Defining Localized Routes" lang="php">
+<code-snippet name="Prefixed (SEO Friendly: /en/dashboard)" lang="php">
 use Illuminate\Support\Facades\Route;
 
 Route::localizedWithPrefix(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    });
+Route::get('/dashboard', fn() => view('dashboard'));
+});
+</code-snippet>
+@endverbatim
+
+Apply localization middlewarewithout URI prefixes.
+@verbatim
+<code-snippet name="No Prefix (Clean URL: /dashboard)" lang="php">
+use Illuminate\Support\Facades\Route;
+
+Route::localizedWithoutPrefix(function () {
+Route::get('/settings', fn() => view('settings'));
 });
 </code-snippet>
 @endverbatim
