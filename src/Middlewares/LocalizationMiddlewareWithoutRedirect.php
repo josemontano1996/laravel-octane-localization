@@ -7,7 +7,6 @@ namespace Josemontano1996\LaravelOctaneLocalization\Middlewares;
 use Closure;
 use Illuminate\Http\Request;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationManagerInterface;
-use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationRedirectorInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 final readonly class LocalizationMiddlewareWithoutRedirect

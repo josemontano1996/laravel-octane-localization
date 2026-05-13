@@ -23,16 +23,16 @@ test('it registers @currentLocale directive', function (): void {
 
 test('it registers @isLocale directive using Blade::if', function (): void {
     $compiled = Blade::compileString("@isLocale('en') yes @elseisLocale('es') maybe @else no @endisLocale");
-    
+
     // Blade::if generates internal code using the Blade::check helper
     expect($compiled)->toContain("\Illuminate\Support\Facades\Blade::check('isLocale', 'en')")
-        ->and($compiled)->toContain("else: ?>")
-        ->and($compiled)->toContain("endif; ?>");
+        ->and($compiled)->toContain('else: ?>')
+        ->and($compiled)->toContain('endif; ?>');
 });
 
 test('it registers @supportedLocales directive', function (): void {
     $compiled = Blade::compileString('@supportedLocales($code, $data) {{ $code }} @endsupportedLocales');
-    
+
     expect($compiled)->toContain('foreach(app(Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationConfigInterface::class)->getSupportedLocales() as $code => $data)');
 });
 

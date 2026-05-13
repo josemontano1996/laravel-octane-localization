@@ -39,8 +39,8 @@ test('it can detect locale using drivers', function (): void {
     $driver->shouldReceive('storeLocale')->once()->with('es', Mockery::any());
 
     // Create a real class to satisfy class_exists
-    if (!class_exists('TestDriver')) {
-        eval ('class TestDriver {}');
+    if (! class_exists('TestDriver')) {
+        eval('class TestDriver {}');
     }
 
     $this->app->instance('TestDriver', $driver);
@@ -56,8 +56,8 @@ test('it can discover locale using custom driver stack', function (): void {
     $driver = Mockery::mock(LocaleDriverInterface::class);
     $driver->shouldReceive('getLocale')->andReturn('fr');
 
-    if (!class_exists('CustomDriver')) {
-        eval ('class CustomDriver {}');
+    if (! class_exists('CustomDriver')) {
+        eval('class CustomDriver {}');
     }
 
     $this->app->instance('CustomDriver', $driver);

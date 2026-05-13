@@ -28,10 +28,10 @@ test('localizedWithPrefix macro creates a prefixed group with middleware', funct
     $this->config->shouldReceive('getSupportedLocaleCodes')->andReturn(['en', 'es']);
 
     Route::localizedWithPrefix(function (): void {
-        Route::get('/test-basic', fn(): string => 'test')->name('test.basic');
+        Route::get('/test-basic', fn (): string => 'test')->name('test.basic');
     });
 
-    $route = collect(Route::getRoutes())->first(fn($r): bool => $r->getName() === 'test.basic');
+    $route = collect(Route::getRoutes())->first(fn ($r): bool => $r->getName() === 'test.basic');
 
     expect($route)->not->toBeNull()
         ->and($route->getPrefix())->toBe('{lang}') // Assert exact match
@@ -43,10 +43,10 @@ test('localizedWithPrefix macro applies whereIn constraint to the prefix', funct
     $this->config->shouldReceive('getSupportedLocaleCodes')->andReturn(['en', 'es', 'fr']);
 
     Route::localizedWithPrefix(function (): void {
-        Route::get('/test-constraint', fn(): string => 'test')->name('test.constraint');
+        Route::get('/test-constraint', fn (): string => 'test')->name('test.constraint');
     });
 
-    $route = collect(Route::getRoutes())->first(fn($r): bool => $r->getName() === 'test.constraint');
+    $route = collect(Route::getRoutes())->first(fn ($r): bool => $r->getName() === 'test.constraint');
 
     expect($route)->not->toBeNull();
 
@@ -65,11 +65,11 @@ test('it registers localizedWithoutPrefix macro', function (): void {
 test('localizedWithoutPrefix macro applies middleware but no prefix', function (): void {
     // 1. Define a route using the macro
     Route::localizedWithoutPrefix(function (): void {
-        Route::get('/no-prefix-test', fn(): string => 'ok')->name('test.no_prefix');
+        Route::get('/no-prefix-test', fn (): string => 'ok')->name('test.no_prefix');
     });
 
     // 2. Retrieve the route from the collector
-    $route = collect(Route::getRoutes())->first(fn($r): bool => $r->getName() === 'test.no_prefix');
+    $route = collect(Route::getRoutes())->first(fn ($r): bool => $r->getName() === 'test.no_prefix');
 
     // 3. Assertions
     expect($route)->not->toBeNull()

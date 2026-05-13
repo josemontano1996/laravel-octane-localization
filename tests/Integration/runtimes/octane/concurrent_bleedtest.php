@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-require __DIR__ . '/vendor/autoload.php';
+require __DIR__.'/vendor/autoload.php';
 
 use App\DTOs\DataHolder;
 
@@ -23,45 +23,47 @@ $base_url = getenv('OCTANE_URL') ?: 'http://localhost:8000';
 $default_locale = DataHolder::DEFAULT_LOCALE;
 
 // Routes
-$localized_endpoint = $base_url . '/%s/localized';           // /{locale}/localized
-$localized_no_prefix_endpoint = $base_url . '/localized-without-prefix'; // /localized-without-prefix
-$unlocalized_endpoint = $base_url . '/unlocalized';             // /unlocalized
+$localized_endpoint = $base_url.'/%s/localized';           // /{locale}/localized
+$localized_no_prefix_endpoint = $base_url.'/localized-without-prefix'; // /localized-without-prefix
+$unlocalized_endpoint = $base_url.'/unlocalized';             // /unlocalized
 
 // -------------------------------------------------------------------------
 // Helpers
 // -------------------------------------------------------------------------
 
-function make_localized_handle(string $locale, int $sleep_ms, string $endpoint): \CurlHandle
+function make_localized_handle(string $locale, int $sleep_ms, string $endpoint): CurlHandle
 {
-    $url = sprintf($endpoint, $locale) . '?sleep=' . $sleep_ms . '&expected=' . urlencode($locale);
+    $url = sprintf($endpoint, $locale).'?sleep='.$sleep_ms.'&expected='.urlencode($locale);
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+
     return $ch;
 }
 
-function make_localized_no_prefix_handle(string $locale, int $sleep_ms, string $endpoint): \CurlHandle
+function make_localized_no_prefix_handle(string $locale, int $sleep_ms, string $endpoint): CurlHandle
 {
-    $url = $endpoint . '?sleep=' . $sleep_ms . '&expected=' . urlencode($locale);
+    $url = $endpoint.'?sleep='.$sleep_ms.'&expected='.urlencode($locale);
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-    
-    // Crucial: Since there is no URL prefix, we pass the locale via the Accept-Language 
+
+    // Crucial: Since there is no URL prefix, we pass the locale via the Accept-Language
     // header to trigger the package's fallback locale detection drivers.
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        "Accept-Language: " . $locale
+        'Accept-Language: '.$locale,
     ]);
-    
+
     return $ch;
 }
 
-function make_unlocalized_handle(string $default_locale, int $sleep_ms, string $endpoint): \CurlHandle
+function make_unlocalized_handle(string $default_locale, int $sleep_ms, string $endpoint): CurlHandle
 {
-    $url = $endpoint . '?sleep=' . $sleep_ms . '&expected=' . urlencode($default_locale);
+    $url = $endpoint.'?sleep='.$sleep_ms.'&expected='.urlencode($default_locale);
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+
     return $ch;
 }
 
@@ -128,7 +130,7 @@ while (count($pending) > 0 || count($in_flight) > 0) {
         $ch = $info['handle'];
         $key = (int) $ch;
 
-        if (!isset($in_flight[$key])) {
+        if (! isset($in_flight[$key])) {
             continue;
         }
 
@@ -171,23 +173,24 @@ foreach ($results as $i => $result) {
 
     $is_valid = is_array($data) && array_key_exists('bleeded', $data);
 
-    if (!$is_valid) {
+    if (! $is_valid) {
         $snippet = substr($result['raw'], 0, 120);
         echo "[ERROR] Request #{$i} ({$type}): invalid response"
-            . " (HTTP {$http_code})"
-            . ($curl_err ? ", curl: {$curl_err}" : "")
-            . " — {$snippet}\n";
+            ." (HTTP {$http_code})"
+            .($curl_err ? ", curl: {$curl_err}" : '')
+            ." — {$snippet}\n";
         $errors++;
+
         continue;
     }
 
     if ($data['bleeded']) {
         $detail = implode(', ', array_map(
-            fn($f, $v) => "{$f}: got '{$v['actual']}' expected '{$v['expected']}'",
+            fn ($f, $v) => "{$f}: got '{$v['actual']}' expected '{$v['expected']}'",
             array_keys($data['mismatches']),
             $data['mismatches']
         ));
-        
+
         if ($type === 'unlocalized') {
             $tag = '[BLEED:UNLOCALIZED]';
             $unlocalized_bleeds++;
@@ -198,7 +201,7 @@ foreach ($results as $i => $result) {
             $tag = '[BLEED:LOCALIZED]';
             $localized_bleeds++;
         }
-        
+
         echo "{$tag} Request #{$i} ({$label}): {$detail}\n";
     }
 }

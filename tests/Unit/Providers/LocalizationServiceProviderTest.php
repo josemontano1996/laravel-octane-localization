@@ -8,10 +8,10 @@ use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationStateInterfa
 use Josemontano1996\LaravelOctaneLocalization\Contracts\SeoHelperInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\URLParserInterface;
 use Josemontano1996\LaravelOctaneLocalization\Middlewares\LivewireLocalizationBridge;
+use Josemontano1996\LaravelOctaneLocalization\Providers\LocalizationServiceProvider;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationConfig;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationManager;
 use Josemontano1996\LaravelOctaneLocalization\Services\LocalizationState;
-use Josemontano1996\LaravelOctaneLocalization\Providers\LocalizationServiceProvider;
 use Josemontano1996\LaravelOctaneLocalization\Services\SeoHelper;
 
 it('binds interfaces to implementations', function (): void {

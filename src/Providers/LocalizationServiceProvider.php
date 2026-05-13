@@ -32,7 +32,7 @@ use Override;
 
 class LocalizationServiceProvider extends ServiceProvider
 {
-    public const string CONFIG_PATH = __DIR__ . '/../../config/octane-localization.php';
+    public const string CONFIG_PATH = __DIR__.'/../../config/octane-localization.php';
 
     public const string CONFIG_KEY = 'octane-localization';
 
@@ -44,7 +44,6 @@ class LocalizationServiceProvider extends ServiceProvider
         // 1. Core Services (Singletons)
         $this->app->singleton(LocalizationConfigInterface::class, LocalizationConfig::class);
         $this->app->singleton(URLParserInterface::class, URLParser::class);
-
 
         $this->app->scoped(SeoHelperInterface::class, SeoHelper::class);
         $this->app->scoped(LocalizationRedirectorInterface::class, LocalizationRedirector::class);
@@ -73,7 +72,7 @@ class LocalizationServiceProvider extends ServiceProvider
         foreach ($allUsedDrivers as $driverClass) {
             // Special binding for CookieDriver
             if ($driverClass === CookieDriver::class) {
-                $this->app->scoped($driverClass, fn(): \Josemontano1996\LaravelOctaneLocalization\Drivers\CookieDriver => new CookieDriver(
+                $this->app->scoped($driverClass, fn (): CookieDriver => new CookieDriver(
                     $config
                 ));
 
@@ -89,7 +88,7 @@ class LocalizationServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                self::CONFIG_PATH => config_path(self::CONFIG_KEY . '.php'),
+                self::CONFIG_PATH => config_path(self::CONFIG_KEY.'.php'),
             ], self::CONFIG_KEY);
         }
         // Lazy resolution

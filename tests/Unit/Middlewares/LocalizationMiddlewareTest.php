@@ -28,7 +28,7 @@ it('detects locale, syncs, and adds headers to the response', function (): void 
     app()->setLocale($locale);
 
     // 2. Act
-    $response = $middleware->handle($request, function ($req): \Illuminate\Http\Response {
+    $response = $middleware->handle($request, function ($req): Response {
         return new Response('Hello World');
     });
 
@@ -57,7 +57,7 @@ it('returns a redirect response if the redirector triggers', function (): void {
     $middleware = new LocalizationMiddleware($manager, $redirector);
 
     // 2. Act
-    $response = $middleware->handle($request, function ($req): \Illuminate\Http\Response {
+    $response = $middleware->handle($request, function ($req): Response {
         return new Response('Should not see this');
     });
 
@@ -78,7 +78,7 @@ it('appends Accept-Language to existing Vary headers', function (): void {
     $middleware = new LocalizationMiddleware($manager, $redirector);
 
     // 2. Act
-    $response = $middleware->handle(new Request, function ($req): \Illuminate\Http\Response {
+    $response = $middleware->handle(new Request, function ($req): Response {
         $res = new Response;
         $res->headers->set('Vary', 'User-Agent');
 

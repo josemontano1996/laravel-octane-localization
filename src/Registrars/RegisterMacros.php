@@ -14,9 +14,9 @@ class RegisterMacros
     public static function register(): void
     {
         Route::macro(
-        'localizedWithoutPrefix',
-        fn(callable|string $callback) => Route::middleware(LocalizationMiddlewareWithoutRedirect::class)->group($callback)
-    );
+            'localizedWithoutPrefix',
+            fn (callable|string $callback) => Route::middleware(LocalizationMiddlewareWithoutRedirect::class)->group($callback)
+        );
 
         Route::macro('localizedWithPrefix', function ($callback = null) {
             $config = app(LocalizationConfigInterface::class);

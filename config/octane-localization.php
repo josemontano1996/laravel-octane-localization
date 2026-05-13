@@ -43,7 +43,6 @@ return [
     */
     'parameter_key' => 'locale',
 
-
     /*
     |--------------------------------------------------------------------------
     | Cookie TTL
@@ -105,6 +104,6 @@ return [
                 SessionDriver::class,
                 // Josemontano1996\LaravelOctaneLocalization\Drivers\CookieDriver::class,
                 RequestPreferredLocaleDriver::class,
-            ],],
+            ], ],
     ],
 ];

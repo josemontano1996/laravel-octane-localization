@@ -31,7 +31,7 @@ it('bridges localization when a Livewire header is present', function (): void {
     $middleware = new LivewireLocalizationBridge($manager, $config);
 
     // 2. Act
-    $response = $middleware->handle($request, function ($req): \Illuminate\Http\Response {
+    $response = $middleware->handle($request, function ($req): Response {
         return new Response('Livewire Handled');
     });
 
@@ -52,7 +52,7 @@ it('bypasses logic when the Livewire header is missing', function (): void {
     $middleware = new LivewireLocalizationBridge($manager, $config);
 
     // 2. Act
-    $response = $middleware->handle($request, function ($req): \Illuminate\Http\Response {
+    $response = $middleware->handle($request, function ($req): Response {
         return new Response('Normal Request');
     });
 
