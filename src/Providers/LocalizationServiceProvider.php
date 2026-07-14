@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Josemontano1996\LaravelOctaneLocalization\Services;
 
+use Illuminate\Contracts\Container\Container;
 use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Queue;
@@ -59,11 +60,10 @@ class LocalizationServiceProvider extends ServiceProvider
         Macros::register();
         BladeDirectives::register();
 
-        $localeManager = $this->app->make(LocalizationManagerInterface::class);
-        $localeManager->reset();
+        $this->app->make(LocalizationManagerInterface::class)->reset();
 
-        Queue::before(function (JobProcessing $event) use ($localeManager): void {
-            $localeManager->reset();
+        Queue::before(function (JobProcessing $event): void {
+            app(LocalizationManagerInterface::class)->reset();
         });
     }
 
@@ -80,8 +80,8 @@ class LocalizationServiceProvider extends ServiceProvider
         foreach ($allRegisteredDrivers as $driverClass) {
             // Special binding for CookieDriver
             if ($driverClass === CookieDriver::class) {
-                $this->app->scoped($driverClass, fn (): CookieDriver => new CookieDriver(
-                    $this->app->make(LocalizationConfigInterface::class)
+                $this->app->scoped($driverClass, fn (Container $app): CookieDriver => new CookieDriver(
+                    $app->make(LocalizationConfigInterface::class)
                 ));
 
                 continue;
