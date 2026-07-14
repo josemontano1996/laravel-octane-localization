@@ -26,8 +26,8 @@ class LocalizationServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(self::CONFIG_PATH, LocalizationConfig::CONFIG_KEY);
 
-        $this->app->singleton(URLParserInterface::class, URLParser::class);
         
+        $this->app->scoped(URLParserInterface::class, URLParser::class);
         $this->app->scoped(LocalizationConfigInterface::class, LocalizationConfig::class);
         $this->app->scoped(LocalizationRedirectorInterface::class, LocalizationRedirector::class);
         $this->app->scoped(LocalizationManagerInterface::class, LocalizationManager::class);
