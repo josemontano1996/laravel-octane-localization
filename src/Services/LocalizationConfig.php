@@ -10,15 +10,16 @@ use Josemontano1996\LaravelOctaneLocalization\Exceptions\InvalidConfiguration;
 
 final class LocalizationConfig implements LocalizationConfigInterface
 {
-    public const string DEFAULT_LOCALE_CONFIG_KEY = 'octane-localization.default_locale';
+    public const string CONFIG_KEY = 'octane-localization';
+    public const string DEFAULT_LOCALE_CONFIG_KEY = self::CONFIG_KEY . '.' .'default_locale';
     public const string FALLBACK_LOCALE_CONFIG_KEY = 'app.fallback_locale';
-    public const string SUPPORTED_LOCALES_CONFIG_KEY = 'octane-localization.supported_locales';
-    public const string LOCALIZATION_PARAM_KEY = 'octane-localization.parameter_key';
-    public const string PRIMARY_DRIVERS_KEY = 'octane-localization.drivers';
-    public const string COOKIE_TTL_KEY = 'octane-localization.cookie_ttl';
-    public const string EXT_DRIVERS_KEY = 'octane-localization.ext';
-    public const string IS_REDIRECTION_ACTIVE = 'octane-localization.redirections.active';
-    public const string REDIRECTION_ROUTE_EXCEPTIONS = 'octane-localization.redirections.redirections.except';
+    public const string SUPPORTED_LOCALES_CONFIG_KEY = self::CONFIG_KEY . '.' .'supported_locales';
+    public const string LOCALIZATION_PARAM_KEY = self::CONFIG_KEY . '.' .'parameter_key';
+    public const string PRIMARY_DRIVERS_KEY = self::CONFIG_KEY . '.' .'drivers';
+    public const string COOKIE_TTL_KEY = self::CONFIG_KEY . '.' .'cookie_ttl';
+    public const string EXT_DRIVERS_KEY = self::CONFIG_KEY . '.' .'ext';
+    public const string IS_REDIRECTION_ACTIVE = self::CONFIG_KEY . '.' .'redirections.active';
+    public const string REDIRECTION_ROUTE_EXCEPTIONS = self::CONFIG_KEY . '.' .'redirections.redirections.except';
 
     private ?array $cachedSupported = null;
     private ?array $cachedLocalizationCodes = null;
