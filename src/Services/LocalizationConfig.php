@@ -27,7 +27,7 @@ final class LocalizationConfig implements LocalizationConfigInterface
     public function getPrimaryDrivers(): array
     {
         $key = self::PRIMARY_DRIVERS_KEY;
-        $drivers = Config::get($key);
+        $drivers = config($key);
 
         if ($drivers === null) {
             throw InvalidConfiguration::missingKey($key);
@@ -47,7 +47,7 @@ final class LocalizationConfig implements LocalizationConfigInterface
     public function getAllExtensionDrivers(): array
     {
         $key = self::EXT_DRIVERS_KEY;
-        $ext = (array) Config::get($key, []);
+        $ext = (array) config($key, []);
 
         $allExtDrivers = [];
 
@@ -65,7 +65,7 @@ final class LocalizationConfig implements LocalizationConfigInterface
 
         $key = self::EXT_DRIVERS_KEY . ".{$extension}.drivers";
 
-        $drivers = Config::get($key);
+        $drivers = config($key);
 
         if (!\is_array($drivers)) {
             return [];
@@ -77,7 +77,7 @@ final class LocalizationConfig implements LocalizationConfigInterface
     public function getDefaultLocale(): string
     {
         $key = self::DEFAULT_LOCALE_CONFIG_KEY;
-        $locale = Config::get($key);
+        $locale = config($key);
 
         if ($locale === null) {
             throw InvalidConfiguration::missingKey($key);
@@ -97,7 +97,7 @@ final class LocalizationConfig implements LocalizationConfigInterface
     public function getDefaultFallbackLocale(): string
     {
         $key = self::FALLBACK_LOCALE_CONFIG_KEY;
-        $fallback = Config::get($key);
+        $fallback = config($key);
 
         if ($fallback === null) {
             throw InvalidConfiguration::missingKey($key);
@@ -121,7 +121,7 @@ final class LocalizationConfig implements LocalizationConfigInterface
         }
 
         $configKey = self::SUPPORTED_LOCALES_CONFIG_KEY;
-        $raw = Config::get($configKey);
+        $raw = config($configKey);
 
         if ($raw == null) {
             throw InvalidConfiguration::missingKey($configKey);
@@ -168,7 +168,7 @@ final class LocalizationConfig implements LocalizationConfigInterface
     {
         $key = self::LOCALIZATION_PARAM_KEY;
 
-        $parameterKey = Config::get($key);
+        $parameterKey = config($key);
 
         if ($parameterKey === null) {
             throw InvalidConfiguration::missingKey($key);
@@ -186,13 +186,13 @@ final class LocalizationConfig implements LocalizationConfigInterface
 
     public function getCookieExpiration(): int
     {
-        return (int) Config::get(self::COOKIE_TTL_KEY, 1440);
+        return (int) config(self::COOKIE_TTL_KEY, 1440);
     }
 
     public function isRedirectionEnabled(): bool
     {
         $key = self::IS_REDIRECTION_ACTIVE;
-        $val = Config::get($key, false);
+        $val = config($key, false);
 
         if (!\is_bool($val)) {
             throw InvalidConfiguration::invalidType($key, 'bool');
@@ -204,7 +204,7 @@ final class LocalizationConfig implements LocalizationConfigInterface
     public function getRedirectionExcludedPaths(): array
     {
         $key = self::REDIRECTION_ROUTE_EXCEPTIONS;
-        $val = Config::get($key, []);
+        $val = config($key, []);
 
         if (!\is_array($val)) {
             throw InvalidConfiguration::invalidType($key, 'array');
