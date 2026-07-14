@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Josemontano1996\LaravelOctaneLocalization\Services;
 
+use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Queue\Events\JobProcessing;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationConfigInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationContextInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationManagerInterface;
@@ -15,6 +18,8 @@ use Josemontano1996\LaravelOctaneLocalization\Drivers\CookieDriver;
 use Josemontano1996\LaravelOctaneLocalization\Middlewares\LivewireLocalizationBridge;
 use Josemontano1996\LaravelOctaneLocalization\Middlewares\LocalizationMiddleware;
 use Josemontano1996\LaravelOctaneLocalization\Middlewares\LocalizationMiddlewareWithoutRedirect;
+use Josemontano1996\LaravelOctaneLocalization\Registrars\BladeDirectives;
+use Josemontano1996\LaravelOctaneLocalization\Registrars\Macros;
 use Override;
 
 class LocalizationServiceProvider extends ServiceProvider
@@ -26,7 +31,7 @@ class LocalizationServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(self::CONFIG_PATH, LocalizationConfig::CONFIG_KEY);
 
-        
+
         $this->app->scoped(URLParserInterface::class, URLParser::class);
         $this->app->scoped(LocalizationConfigInterface::class, LocalizationConfig::class);
         $this->app->scoped(LocalizationRedirectorInterface::class, LocalizationRedirector::class);
@@ -39,6 +44,28 @@ class LocalizationServiceProvider extends ServiceProvider
         $this->app->scoped(LivewireLocalizationBridge::class);
 
         $this->registerDrivers();
+    }
+
+    public function boot(): void
+    {
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                self::CONFIG_PATH => config_path(LocalizationConfig::CONFIG_KEY . '.php'),
+            ], LocalizationConfig::CONFIG_KEY);
+        }
+        // Lazy resolution
+        $router = $this->app->make(Router::class);
+        $router->prependMiddlewareToGroup('web', LivewireLocalizationBridge::class);
+
+        Macros::register();
+        BladeDirectives::register();
+
+        $localeManager = $this->app->make(LocalizationManagerInterface::class);
+        $localeManager->reset();
+
+        Queue::before(function (JobProcessing $event) use ($localeManager): void {
+            $localeManager->reset();
+        });
     }
 
     private function registerDrivers(): void
