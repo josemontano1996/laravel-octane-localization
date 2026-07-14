@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Josemontano1996\LaravelOctaneLocalization\Services;
 
+use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Queue\Events\JobProcessing;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationConfigInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationContextInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationManagerInterface;
@@ -24,13 +24,12 @@ use Override;
 
 class LocalizationServiceProvider extends ServiceProvider
 {
-    public const string CONFIG_PATH = __DIR__ . '/../../config/octane-localization.php';
+    public const string CONFIG_PATH = __DIR__.'/../../config/octane-localization.php';
 
     #[Override]
     public function register(): void
     {
         $this->mergeConfigFrom(self::CONFIG_PATH, LocalizationConfig::CONFIG_KEY);
-
 
         $this->app->scoped(URLParserInterface::class, URLParser::class);
         $this->app->scoped(LocalizationConfigInterface::class, LocalizationConfig::class);
@@ -50,7 +49,7 @@ class LocalizationServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                self::CONFIG_PATH => config_path(LocalizationConfig::CONFIG_KEY . '.php'),
+                self::CONFIG_PATH => config_path(LocalizationConfig::CONFIG_KEY.'.php'),
             ], LocalizationConfig::CONFIG_KEY);
         }
         // Lazy resolution
@@ -81,7 +80,7 @@ class LocalizationServiceProvider extends ServiceProvider
         foreach ($allRegisteredDrivers as $driverClass) {
             // Special binding for CookieDriver
             if ($driverClass === CookieDriver::class) {
-                $this->app->scoped($driverClass, fn(): CookieDriver => new CookieDriver(
+                $this->app->scoped($driverClass, fn (): CookieDriver => new CookieDriver(
                     $this->app->make(LocalizationConfigInterface::class)
                 ));
 

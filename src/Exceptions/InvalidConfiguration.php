@@ -18,7 +18,6 @@ final class InvalidConfiguration extends RuntimeException
         return new self("The configuration key [{$configKey}] is missing a value. This is required for the localization engine.");
     }
 
-
     public static function missingSupportedLocales(string $configKey): self
     {
         return new self("You must define at least one locale in [{$configKey}].");

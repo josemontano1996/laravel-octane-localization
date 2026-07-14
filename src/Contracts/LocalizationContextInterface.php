@@ -10,12 +10,11 @@ interface LocalizationContextInterface
      * Retrieve the locale from the current Context.
      */
     public function get(): ?string;
-    
+
     /**
      * Store the locale in the Laravel 11 Context.
      */
     public function set(string $locale): void;
-
 
     /**
      * Remove the localization data from the Context.

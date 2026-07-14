@@ -6,7 +6,6 @@ namespace Josemontano1996\LaravelOctaneLocalization\Registrars;
 
 use Illuminate\Support\Facades\Blade;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationConfigInterface;
-use Josemontano1996\LaravelOctaneLocalization\Contracts\SeoHelperInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\URLParserInterface;
 
 class BladeDirectives

@@ -4,24 +4,33 @@ declare(strict_types=1);
 
 namespace Josemontano1996\LaravelOctaneLocalization\Services;
 
-use Illuminate\Support\Facades\Config;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationConfigInterface;
 use Josemontano1996\LaravelOctaneLocalization\Exceptions\InvalidConfiguration;
 
 final class LocalizationConfig implements LocalizationConfigInterface
 {
     public const string CONFIG_KEY = 'octane-localization';
-    public const string DEFAULT_LOCALE_CONFIG_KEY = self::CONFIG_KEY . '.' .'default_locale';
+
+    public const string DEFAULT_LOCALE_CONFIG_KEY = self::CONFIG_KEY.'.'.'default_locale';
+
     public const string FALLBACK_LOCALE_CONFIG_KEY = 'app.fallback_locale';
-    public const string SUPPORTED_LOCALES_CONFIG_KEY = self::CONFIG_KEY . '.' .'supported_locales';
-    public const string LOCALIZATION_PARAM_KEY = self::CONFIG_KEY . '.' .'parameter_key';
-    public const string PRIMARY_DRIVERS_KEY = self::CONFIG_KEY . '.' .'drivers';
-    public const string COOKIE_TTL_KEY = self::CONFIG_KEY . '.' .'cookie_ttl';
-    public const string EXT_DRIVERS_KEY = self::CONFIG_KEY . '.' .'ext';
-    public const string IS_REDIRECTION_ACTIVE = self::CONFIG_KEY . '.' .'redirections.active';
-    public const string REDIRECTION_ROUTE_EXCEPTIONS = self::CONFIG_KEY . '.' .'redirections.redirections.except';
+
+    public const string SUPPORTED_LOCALES_CONFIG_KEY = self::CONFIG_KEY.'.'.'supported_locales';
+
+    public const string LOCALIZATION_PARAM_KEY = self::CONFIG_KEY.'.'.'parameter_key';
+
+    public const string PRIMARY_DRIVERS_KEY = self::CONFIG_KEY.'.'.'drivers';
+
+    public const string COOKIE_TTL_KEY = self::CONFIG_KEY.'.'.'cookie_ttl';
+
+    public const string EXT_DRIVERS_KEY = self::CONFIG_KEY.'.'.'ext';
+
+    public const string IS_REDIRECTION_ACTIVE = self::CONFIG_KEY.'.'.'redirections.active';
+
+    public const string REDIRECTION_ROUTE_EXCEPTIONS = self::CONFIG_KEY.'.'.'redirections.redirections.except';
 
     private ?array $cachedSupported = null;
+
     private ?array $cachedLocalizationCodes = null;
 
     public function getPrimaryDrivers(): array
@@ -33,7 +42,7 @@ final class LocalizationConfig implements LocalizationConfigInterface
             throw InvalidConfiguration::missingKey($key);
         }
 
-        if (!\is_array($drivers)) {
+        if (! \is_array($drivers)) {
             throw InvalidConfiguration::invalidType($key, 'array');
         }
 
@@ -63,11 +72,11 @@ final class LocalizationConfig implements LocalizationConfigInterface
     public function getExtensionDrivers(string $extension): array
     {
 
-        $key = self::EXT_DRIVERS_KEY . ".{$extension}.drivers";
+        $key = self::EXT_DRIVERS_KEY.".{$extension}.drivers";
 
         $drivers = config($key);
 
-        if (!\is_array($drivers)) {
+        if (! \is_array($drivers)) {
             return [];
         }
 
@@ -83,7 +92,7 @@ final class LocalizationConfig implements LocalizationConfigInterface
             throw InvalidConfiguration::missingKey($key);
         }
 
-        if (!\is_string($locale)) {
+        if (! \is_string($locale)) {
             throw InvalidConfiguration::invalidType($key, 'string');
         }
 
@@ -103,7 +112,7 @@ final class LocalizationConfig implements LocalizationConfigInterface
             throw InvalidConfiguration::missingKey($key);
         }
 
-        if (!\is_string($fallback)) {
+        if (! \is_string($fallback)) {
             throw InvalidConfiguration::invalidType($key, 'string');
         }
 
@@ -134,6 +143,7 @@ final class LocalizationConfig implements LocalizationConfigInterface
             if (\is_int($localeCode)) {
                 // Handle simple list: ['en', 'es']
                 $normalized[$value] = ['name' => $value];
+
                 continue;
             }
 
@@ -154,7 +164,6 @@ final class LocalizationConfig implements LocalizationConfigInterface
         return $this->cachedLocalizationCodes = array_keys($this->getSupportedLocales());
     }
 
-
     public function isSupportedLocale(?string $locale): bool
     {
         if ($locale === null || $locale === '') {
@@ -174,13 +183,14 @@ final class LocalizationConfig implements LocalizationConfigInterface
             throw InvalidConfiguration::missingKey($key);
         }
 
-        if (!\is_string($parameterKey)) {
+        if (! \is_string($parameterKey)) {
             throw InvalidConfiguration::invalidType($key, 'string');
         }
 
         if (trim($parameterKey) === '') {
             throw InvalidConfiguration::missingValue($key);
         }
+
         return $parameterKey;
     }
 
@@ -194,7 +204,7 @@ final class LocalizationConfig implements LocalizationConfigInterface
         $key = self::IS_REDIRECTION_ACTIVE;
         $val = config($key, false);
 
-        if (!\is_bool($val)) {
+        if (! \is_bool($val)) {
             throw InvalidConfiguration::invalidType($key, 'bool');
         }
 
@@ -206,13 +216,11 @@ final class LocalizationConfig implements LocalizationConfigInterface
         $key = self::REDIRECTION_ROUTE_EXCEPTIONS;
         $val = config($key, []);
 
-        if (!\is_array($val)) {
+        if (! \is_array($val)) {
             throw InvalidConfiguration::invalidType($key, 'array');
         }
 
         return $val;
 
     }
-
-
 }

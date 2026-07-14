@@ -24,9 +24,9 @@ final readonly class RefererDriver implements LocaleDriverInterface
         }
 
         $refererHost = parse_url($referer, PHP_URL_HOST);
-    
+
         if ($refererHost !== $request->getHost()) {
-            return null; 
+            return null;
         }
 
         return $this->urlParser->getLocaleFromUrl($referer);
