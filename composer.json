@@ -1,0 +1,17 @@
+{
+    "name": "josemontano1996/laravel-octane-localization",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Josemontano1996\\LaravelOctaneLocalization\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Jose Manuel Montano Mengual",
+            "email": "jm3develop@gmail.com"
+        }
+    ],
+    "require": {}
+}
