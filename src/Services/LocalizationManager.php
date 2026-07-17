@@ -35,14 +35,34 @@ final readonly class LocalizationManager implements LocalizationManagerInterface
 
     public function detect(Request $request): void
     {
-        $locale = $this->runDriverStack($request, $this->config->getPrimaryDrivers());
+        $driverClasses = $this->config->getPrimaryDrivers();
+        $detectedLocales = [];
+        $locale = $this->config->getDefaultLocale();
+
+        // Pass 1: Run the stack and cache the actual string outputs
+        foreach ($driverClasses as $driverClass) {
+            $driver = $this->resolveDriver($driverClass);
+            $result = $driver->getLocale($request);
+
+            // Save what this specific driver read from the request
+            $detectedLocales[$driverClass] = $result;
+
+            if ($this->config->isSupportedLocale($result)) {
+                $locale = $result;
+                break;
+            }
+        }
 
         $this->state->set($locale);
 
-        foreach ($this->config->getPrimaryDrivers() as $driverClass) {
+        // Pass 2: Sync back using the cached string values
+        foreach ($driverClasses as $driverClass) {
             $driver = $this->resolveDriver($driverClass);
 
-            if ($driver->getLocale($request) !== $locale) {
+            // If this driver hasn't run yet, or if its string result doesn't match our winner
+            $previouslyDetected = $detectedLocales[$driverClass] ?? null;
+
+            if ($previouslyDetected !== $locale) {
                 $driver->storeLocale($locale, $request);
             }
         }
