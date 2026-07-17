@@ -25,26 +25,16 @@ final readonly class RequestPreferredLocaleDriver implements LocaleDriverInterfa
         }
 
         $supported = $this->config->getSupportedLocaleCodes();
-
-        // Pass null to get Symfony's absolute preferred language from the browser
-        $absolutePreferred = $request->getPreferredLanguage();
-
-        // If the browser has no preference at all, or if Symfony's matched 
-        // language isn't actually in your supported array, return null.
         $preferred = $request->getPreferredLanguage($supported);
 
-        if ($preferred === $absolutePreferred || \in_array($preferred, $supported, true)) {
-            // Double check: if Symfony just fell back to index 0 because there was zero overlap
-            if (!$this->hasLanguageOverlap($request->getLanguages(), $supported)) {
-                return null;
-            }
-
-            return $preferred;
+        // Double check: if Symfony just fell back to index 0 because there was zero overlap
+        if (!$this->hasLanguageOverlap($request->getLanguages(), $supported)) {
+            return null;
         }
 
-        return null;
+        return $preferred;
     }
-
+    
     /**
      * Helper to verify if the browser's language values share any base language with supported locales.
      */
