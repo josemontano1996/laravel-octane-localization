@@ -2,11 +2,6 @@
 
 declare(strict_types=1);
 
-use Josemontano1996\LaravelOctaneLocalization\Drivers\RefererDriver;
-use Josemontano1996\LaravelOctaneLocalization\Drivers\RequestPreferredLocaleDriver;
-use Josemontano1996\LaravelOctaneLocalization\Drivers\SessionDriver;
-use Josemontano1996\LaravelOctaneLocalization\Drivers\UrlDriver;
-
 return [
     /*
     |--------------------------------------------------------------------------
@@ -15,7 +10,8 @@ return [
     |
     | The locale that will be used when no supported locale is detected.
     | This is also the locale restored by the package when resetting
-    | Octane and queue worker state between requests.
+    | Octane and queue worker state between requests, 
+    | SHOULD NOT reference the app.locale variable.
     |
     */
     'default_locale' => 'en',
@@ -66,10 +62,10 @@ return [
     |
     */
     'drivers' => [
-        // UrlDriver::class,
-        SessionDriver::class,
+        // Josemontano1996\LaravelOctaneLocalization\Drivers\UrlDriver::class,
+        Josemontano1996\LaravelOctaneLocalization\Drivers\SessionDriver::class,
         // Josemontano1996\LaravelOctaneLocalization\Drivers\CookieDriver::class,
-        RequestPreferredLocaleDriver::class,
+        Josemontano1996\LaravelOctaneLocalization\Drivers\RequestPreferredLocaleDriver::class,
     ],
 
     /*
@@ -83,8 +79,8 @@ return [
     |
     */
     'redirections' => [
-        'active' => true,
-        'except' => ['api/*', 'webhooks/*'],
+        'active' => false,
+        // 'except' => ['api/*', 'webhooks/*'],
     ],
 
     /*
@@ -100,10 +96,10 @@ return [
     'ext' => [
         'livewire' => [
             'drivers' => [
-                RefererDriver::class,
-                SessionDriver::class,
+                Josemontano1996\LaravelOctaneLocalization\Drivers\RefererDriver::class,
+                Josemontano1996\LaravelOctaneLocalization\Drivers\SessionDriver::class,
                 // Josemontano1996\LaravelOctaneLocalization\Drivers\CookieDriver::class,
-                RequestPreferredLocaleDriver::class,
+                Josemontano1996\LaravelOctaneLocalization\Drivers\RequestPreferredLocaleDriver::class,
             ], ],
     ],
 ];
