@@ -11,11 +11,11 @@ final class DriverException extends InvalidArgumentException
     public static function invalidInterface(string $driverClass, string $driverInterface): self
     {
         return new self(
-            "The driver [{$driverClass}] must implement [{$driverInterface}]");
+            "The driver [{$driverClass}] must implement [{$driverInterface}] interface.");
     }
 
     public static function notFound(string $driverClass): self
     {
-        return new self("The localization driver class [{$driverClass}] does not exist.");
+        return new self("The localization driver class [{$driverClass}] could not be found.");
     }
 }

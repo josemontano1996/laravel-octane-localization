@@ -10,11 +10,16 @@ class InvalidLocale extends InvalidArgumentException
 {
     public static function becauseItIsEmpty(): self
     {
-        return new self('The locale cannot be empty.');
+        return new self(
+            'The provided locale string cannot be empty.'
+        );
     }
 
     public static function unsupported(string $locale): self
     {
-        return new self("The locale [{$locale}] is not in your supported list.");
+        return new self(
+            "The locale '{$locale}' is not supported. " .
+            "Please check your localization configuration to ensure it is added to your supported list."
+        );
     }
 }
