@@ -37,33 +37,30 @@ final readonly class LocalizationManager implements LocalizationManagerInterface
     {
         $driverClasses = $this->config->getPrimaryDrivers();
         $detectedLocales = [];
-        $locale = $this->config->getDefaultLocale();
+        $locale = null;
 
-        // Pass 1: Run the stack and cache the actual string outputs
+        // Pass 1: Let EVERY driver read its state exactly once
         foreach ($driverClasses as $driverClass) {
             $driver = $this->resolveDriver($driverClass);
             $result = $driver->getLocale($request);
 
-            // Save what this specific driver read from the request
             $detectedLocales[$driverClass] = $result;
 
-            if ($this->config->isSupportedLocale($result)) {
+            // The FIRST driver to find a supported locale sets the winning value
+            if ($locale === null && $this->config->isSupportedLocale($result)) {
                 $locale = $result;
-                break;
             }
         }
 
+        // Fallback to default if no driver detected anything valid
+        $locale ??= $this->config->getDefaultLocale();
+
         $this->state->set($locale);
 
-        // Pass 2: Sync back using the cached string values
+        // Pass 2: Only write if the existing state is actually different
         foreach ($driverClasses as $driverClass) {
-            $driver = $this->resolveDriver($driverClass);
-
-            // If this driver hasn't run yet, or if its string result doesn't match our winner
-            $previouslyDetected = $detectedLocales[$driverClass] ?? null;
-
-            if ($previouslyDetected !== $locale) {
-                $driver->storeLocale($locale, $request);
+            if ($detectedLocales[$driverClass] !== $locale) {
+                $this->resolveDriver($driverClass)->storeLocale($locale, $request);
             }
         }
     }
