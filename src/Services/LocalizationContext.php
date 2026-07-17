@@ -20,14 +20,4 @@ final readonly class LocalizationContext implements LocalizationContextInterface
     {
         return Context::get(self::KEY);
     }
-
-    public function has(): bool
-    {
-        return Context::has(self::KEY);
-    }
-
-    public function forget(): void
-    {
-        Context::forget(self::KEY);
-    }
 }
