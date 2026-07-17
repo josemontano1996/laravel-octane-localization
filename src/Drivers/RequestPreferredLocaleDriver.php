@@ -15,12 +15,11 @@ final readonly class RequestPreferredLocaleDriver implements LocaleDriverInterfa
 
     public function __construct(
         private LocalizationConfigInterface $config
-    ) {
-    }
+    ) {}
 
     public function getLocale(Request $request): ?string
     {
-        if (!$request->header('accept-language')) {
+        if (! $request->header('accept-language')) {
             return null;
         }
 
@@ -28,13 +27,13 @@ final readonly class RequestPreferredLocaleDriver implements LocaleDriverInterfa
         $preferred = $request->getPreferredLanguage($supported);
 
         // Double check: if Symfony just fell back to index 0 because there was zero overlap
-        if (!$this->hasLanguageOverlap($request->getLanguages(), $supported)) {
+        if (! $this->hasLanguageOverlap($request->getLanguages(), $supported)) {
             return null;
         }
 
         return $preferred;
     }
-    
+
     /**
      * Helper to verify if the browser's language values share any base language with supported locales.
      */

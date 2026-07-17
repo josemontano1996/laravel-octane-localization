@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+use Josemontano1996\LaravelOctaneLocalization\Drivers\RefererDriver;
+use Josemontano1996\LaravelOctaneLocalization\Drivers\RequestPreferredLocaleDriver;
+use Josemontano1996\LaravelOctaneLocalization\Drivers\SessionDriver;
 
 return [
     /*
@@ -10,7 +13,7 @@ return [
     |
     | The locale that will be used when no supported locale is detected.
     | This is also the locale restored by the package when resetting
-    | Octane and queue worker state between requests, 
+    | Octane and queue worker state between requests,
     | SHOULD NOT reference the app.locale variable.
     |
     */
@@ -63,9 +66,9 @@ return [
     */
     'drivers' => [
         // Josemontano1996\LaravelOctaneLocalization\Drivers\UrlDriver::class,
-        Josemontano1996\LaravelOctaneLocalization\Drivers\SessionDriver::class,
+        SessionDriver::class,
         // Josemontano1996\LaravelOctaneLocalization\Drivers\CookieDriver::class,
-        Josemontano1996\LaravelOctaneLocalization\Drivers\RequestPreferredLocaleDriver::class,
+        RequestPreferredLocaleDriver::class,
     ],
 
     /*
@@ -96,10 +99,10 @@ return [
     'ext' => [
         'livewire' => [
             'drivers' => [
-                Josemontano1996\LaravelOctaneLocalization\Drivers\RefererDriver::class,
-                Josemontano1996\LaravelOctaneLocalization\Drivers\SessionDriver::class,
+                RefererDriver::class,
+                SessionDriver::class,
                 // Josemontano1996\LaravelOctaneLocalization\Drivers\CookieDriver::class,
-                Josemontano1996\LaravelOctaneLocalization\Drivers\RequestPreferredLocaleDriver::class,
+                RequestPreferredLocaleDriver::class,
             ], ],
     ],
 ];

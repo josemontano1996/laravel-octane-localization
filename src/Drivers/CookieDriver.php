@@ -24,8 +24,8 @@ final readonly class CookieDriver implements LocaleDriverInterface
         $locale = $request->cookie($cookieKey);
 
         if (\is_string($locale) && $this->config->isSupportedLocale($locale)) {
-                return $locale;
-            }
+            return $locale;
+        }
 
         return null;
     }

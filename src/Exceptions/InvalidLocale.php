@@ -18,8 +18,8 @@ class InvalidLocale extends InvalidArgumentException
     public static function unsupported(string $locale): self
     {
         return new self(
-            "The locale '{$locale}' is not supported. " .
-            "Please check your localization configuration to ensure it is added to your supported list."
+            "The locale '{$locale}' is not supported. ".
+            'Please check your localization configuration to ensure it is added to your supported list.'
         );
     }
 }
