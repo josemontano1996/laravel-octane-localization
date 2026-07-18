@@ -22,7 +22,8 @@ final readonly class LocalizationManager implements LocalizationManagerInterface
         private LocalizationConfigInterface $config,
         private LocalizationStateManagerInterface $state,
         private LocalizationContextInterface $context
-    ) {}
+    ) {
+    }
 
     public function setLocale(string $locale): void
     {
@@ -33,7 +34,14 @@ final readonly class LocalizationManager implements LocalizationManagerInterface
         $this->state->set($target);
     }
 
-    public function detect(Request $request): void
+    public function storeLocale(string $locale, Request $request): void
+    {
+        foreach ($this->config->getPrimaryDrivers() as $driverClass) {
+            $this->resolveDriver($driverClass)->storeLocale($locale, $request);
+        }
+    }
+
+    public function resolve(Request $request): void
     {
         $driverClasses = $this->config->getPrimaryDrivers();
         $detectedLocales = [];
@@ -125,13 +133,13 @@ final readonly class LocalizationManager implements LocalizationManagerInterface
 
     private function resolveDriver(string $class): LocaleDriverInterface
     {
-        if (! class_exists($class)) {
+        if (!class_exists($class)) {
             throw DriverException::notFound($class);
         }
 
         $driver = app($class);
 
-        if (! $driver instanceof LocaleDriverInterface) {
+        if (!$driver instanceof LocaleDriverInterface) {
             throw DriverException::invalidInterface($class, LocaleDriverInterface::class);
         }
 

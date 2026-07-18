@@ -13,6 +13,7 @@ use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationConfigInterf
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationContextInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationManagerInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationRedirectorInterface;
+use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationServiceInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationStateManagerInterface;
 use Josemontano1996\LaravelOctaneLocalization\Contracts\URLParserInterface;
 use Josemontano1996\LaravelOctaneLocalization\Drivers\CookieDriver;
@@ -38,6 +39,7 @@ class LocalizationServiceProvider extends ServiceProvider
         $this->app->scoped(LocalizationManagerInterface::class, LocalizationManager::class);
         $this->app->scoped(LocalizationContextInterface::class, LocalizationContext::class);
         $this->app->scoped(LocalizationStateManagerInterface::class, LocalizationStateManager::class);
+        $this->app->scoped(LocalizationServiceInterface::class, LocalizationService::class);
 
         $this->app->scoped(LocalizationMiddleware::class);
         $this->app->scoped(LocalizationMiddlewareWithoutRedirect::class);

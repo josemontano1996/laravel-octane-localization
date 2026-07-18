@@ -19,7 +19,7 @@ final readonly class LocalizationMiddleware
 
     public function handle(Request $request, Closure $next): Response
     {
-        $this->manager->detect($request);
+        $this->manager->resolve($request);
         $this->manager->syncWithApplication();
 
         if ($this->redirector->shouldRedirect($request)) {

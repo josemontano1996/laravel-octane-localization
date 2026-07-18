@@ -17,7 +17,7 @@ final readonly class LocalizationMiddlewareWithoutRedirect
 
     public function handle(Request $request, Closure $next): Response
     {
-        $this->manager->detect($request);
+        $this->manager->resolve($request);
         $this->manager->syncWithApplication();
 
         $response = $next($request);
