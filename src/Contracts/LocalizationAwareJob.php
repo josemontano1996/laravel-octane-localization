@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Josemontano1996\LaravelOctaneLocalization\Contracts\Support;
+namespace Josemontano1996\LaravelOctaneLocalization\Contracts;
 
 /**
  * Mark a class as capable of re-hydrating localization

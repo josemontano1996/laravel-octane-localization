@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Josemontano1996\LaravelOctaneLocalization\Queue;
 
 use Closure;
-use Josemontano1996\LaravelOctaneLocalization\Contracts\Support\LocalizationAwareJob;
+use Josemontano1996\LaravelOctaneLocalization\Contracts\LocalizationAwareJob;
 
 class LocalizationQueueMiddleware
 {
